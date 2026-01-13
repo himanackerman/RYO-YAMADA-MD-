@@ -1,7 +1,7 @@
 {
-  "name": "nao-esm",
+  "name": "ryo-yamada-md",
   "version": "10.0.0",
-  "description": "BOT Whatsapp",
+  "description": "RYO YAMADA MD - WhatsApp Multi-Device Bot",
   "main": "index.js",
   "type": "module",
   "directories": {
@@ -15,27 +15,26 @@
     "dev": "nodemon --experimental-specifier-resolution=node index.js"
   },
   "keywords": [
-    "termux-whatsapp-bot",
+    "ryo-yamada-md",
     "whatsapp-bot",
-    "whatsapp",
-    "js-whatsapp",
-    "whatsapp",
-    "Games-wabot",
-    "wabot-aq",
     "multi-device",
-    "MD",
-    "baileys-md"
+    "bot-whatsapp",
+    "termux-bot",
+    "nodejs-bot",
+    "esm-bot",
+    "rpg-bot",
+    "plugin-system"
   ],
-  "homepage": "https://github.com/ShirokamiRyzen/Nao-MD",
+  "homepage": "https://github.com/himanackerman/RYO-YAMADA-MD-",
   "author": {
-    "name": "ShirokamiRyzen"
+    "name": "Hilman"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ShirokamiRyzen/Nao-MD.git"
+    "url": "git+https://github.com/himanackerman/RYO-YAMADA-MD-.git"
   },
   "bugs": {
-    "url": "https://github.com/ShirokamiRyzen/Nao-MD/issues"
+    "url": "https://github.com/himanackerman/RYO-YAMADA-MD-/issues"
   },
   "license": "GPL-3.0-or-later",
   "dependencies": {
@@ -92,4 +91,4 @@
     "yt-search": "^2.10.4",
     "zs-extract": "^1.4.2"
   }
-}
+  }
