@@ -28,13 +28,13 @@ const more = String.fromCharCode(8206)
 const readMore = more.repeat(4001)
 
 /*============= MAIN INFO =============*/
-global.owner = [['6285523568687', 'Hilman', true]]
+global.owner = [['', 'Hilman', true]]
 global.mods = []
 global.prems = []
-global.nomorbot = '6283871049395' // ubah pake no kalian
-global.nomorown = '6285523568687'// ubah pake no kalian
+global.nomorbot = '' // ubah pake no kalian
+global.nomorown = ''// ubah pake no kalian
 global.nameown = 'Hilman' //nama Owner
-global.version = '7.0'
+global.version = '10.0.0'
 global.autotyping = false // default mati
 global.autorecording = false // default mati
 
