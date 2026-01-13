@@ -21,12 +21,27 @@ const delay = ms => isNumber(ms) && new Promise(resolve => setTimeout(resolve, m
 
 export async function handler(chatUpdate) {
     this.msgqueque = this.msgqueque || []
-    if (!chatUpdate)
-        return
+    if (!chatUpdate) return
+
+    let m = chatUpdate.messages?.[chatUpdate.messages.length - 1]
+    if (!m) return
+    if (!m.message) return
+
+    this._chatLock = this._chatLock || new Map()
+
+    const chatId = m.chat || m.key?.remoteJid
+    const now = Date.now()
+    const lockTime = this._chatLock.get(chatId)
+
+    if (lockTime && now - lockTime < 4000) return
+    this._chatLock.set(chatId, now)
+
+    setTimeout(() => {
+        this._chatLock.delete(chatId)
+    }, 5000)
+
     this.pushMessage(chatUpdate.messages).catch(console.error)
-    let m = chatUpdate.messages[chatUpdate.messages.length - 1]
-    if (!m)
-        return
+
     if (global.db.data == null)
         await global.loadDatabase()
     try {
