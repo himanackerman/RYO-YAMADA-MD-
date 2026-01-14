@@ -1,4 +1,3 @@
-import { promises as fs } from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 import moment from 'moment-timezone'
@@ -10,8 +9,7 @@ const __dirname = path.dirname(__filename)
 
 const cooldown = new Map()
 
-const menuImage = "https://raw.githubusercontent.com/himanackerman/Image/main/1768276639285-362.jpeg"
-const thumbImage = "https://raw.githubusercontent.com/himanackerman/Image/main/1768274212195-581.jpeg"
+const menuImage = "https://raw.githubusercontent.com/himanackerman/Image/main/1768274212195-581.jpeg"
 const audioPath = path.join(process.cwd(), 'media', 'tes.mp3')
 
 function formatTag(tag) {
@@ -30,7 +28,7 @@ function ucapan() {
 
 const defaultMenu = {
   before: `
-${ucapan()}, *%name!*
+${ucapan()}, *@%name!*
 Berikut informasi mengenai bot ini:
 
 ┏━━  *BOT INFORMATION*  ━━┓
@@ -73,7 +71,6 @@ let handler = async (m, { conn, usedPrefix, command, text }) => {
     let botname = global.namebot || conn.user?.name || 'Bot'
     let owner   = global.nameown || 'Owner'
     let version = global.version || '1.0.0'
-
     let name = m.pushName || 'User'
 
     let limit = (isDeveloper || user.premiumTime >= 1)
@@ -81,9 +78,7 @@ let handler = async (m, { conn, usedPrefix, command, text }) => {
       : user.limit
 
     let role = isDeveloper ? 'Owner' : (user.role || 'Beginner')
-
     let totalexp = user.totalexp || user.exp || 0
-    let uptime = clockString(process.uptime() * 1000)
 
     let plugins = Object.values(global.plugins || {}).filter(p => !p.disabled)
     let categories = {}
@@ -107,7 +102,7 @@ let handler = async (m, { conn, usedPrefix, command, text }) => {
     const readMore = String.fromCharCode(8206).repeat(4001)
 
     let replace = {
-      name,
+      name: name.replace(/@/g, ''),
       limit,
       role,
       totalexp,
@@ -190,17 +185,8 @@ let handler = async (m, { conn, usedPrefix, command, text }) => {
     await conn.sendMessage(m.chat, {
       image: { url: menuImage },
       caption: finalText,
-      contextInfo: {
-        mentionedJid: [m.sender],
-        externalAdReply: {
-          title: `${botname} WhatsApp Bot ✨`,
-          body: `Uptime: ${uptime}`,
-          thumbnailUrl: thumbImage,
-          mediaType: 1,
-          renderLargerThumbnail: true
-        }
-      }
-    }, { quoted: global.fkontak || m })
+      mentions: [m.sender]
+    }, { quoted: m })
 
     let last = cooldown.get(m.sender) || 0
     if (isDeveloper || Date.now() - last > 60_000) {
@@ -211,12 +197,9 @@ let handler = async (m, { conn, usedPrefix, command, text }) => {
         audioPath,
         'menu.mp3',
         null,
-        global.fkontak || m,
+        m,
         true,
-        {
-          type: 'audioMessage',
-          ptt: true
-        }
+        { ptt: true }
       )
     }
 
@@ -237,4 +220,4 @@ function clockString(ms) {
   let m = Math.floor(ms / 60000) % 60
   let s = Math.floor(ms / 1000) % 60
   return [h, m, s].map(v => String(v).padStart(2, '0')).join(':')
-}
+      }
