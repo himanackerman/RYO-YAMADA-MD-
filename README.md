@@ -93,7 +93,7 @@ Kirim gambar dengan caption:
 ### ▶️ Menampilkan Menu
 ```
 .menu
-.allmenu
+.menu all
 .menu tags
 ```
 
