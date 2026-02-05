@@ -1,64 +1,79 @@
-import { createCanvas, loadImage, registerFont } from 'canvas'
+import fetch from 'node-fetch'
+import axios from 'axios'
+import FormData from 'form-data'
 import fs from 'fs'
 import path from 'path'
-import axios from 'axios'
+
+async function uguu(filePath) {
+  const form = new FormData()
+  form.append('files[]', fs.createReadStream(filePath))
+  const { data } = await axios.post('https://uguu.se/upload', form, {
+    headers: { ...form.getHeaders() }
+  })
+  return data.files[0].url
+}
 
 let handler = async (m, { conn, text }) => {
-  const q = m.quoted ? m.quoted : m
-  const mime = (q.msg || q).mimetype || ''
-  if (!mime.startsWith('image/')) return m.reply('Mana gambarnya')
-  m.reply('Wait...')
-  const tmpDir = process.cwd()
-  const fontUrl = 'https://cloudkuimages.com/uploads/files/CL8QHRYN.ttf'
-  const fontPath = path.join(tmpDir, 'CL8QHRYN.ttf')
+  await m.react('✨')
+
+  let q = m.quoted
+  if (!q) {
+    return conn.sendMessage(
+      m.chat,
+      { text: 'ℹ️ Cara pakai:\nReply gambar lalu ketik *.fakeml teksnya*' },
+      { quoted: global.fkontak }
+    )
+  }
+
+  let mime = (q.msg || q).mimetype || ''
+  if (!mime.startsWith('image/')) {
+    return conn.sendMessage(
+      m.chat,
+      { text: 'ℹ️ Cara pakai:\nReply gambar lalu ketik *.fakeml teksnya*' },
+      { quoted: global.fkontak }
+    )
+  }
+
+  let buffer = await q.download().catch(() => null)
+  if (!buffer) return
+
+  let ext = mime.split('/')[1] || 'jpg'
+  let tempFile = path.join(process.cwd(), `fakeml_${Date.now()}.${ext}`)
+  fs.writeFileSync(tempFile, buffer)
+
   try {
-    if (!fs.existsSync(fontPath)) {
-      const res = await axios.get(fontUrl, { responseType: 'arraybuffer' })
-      fs.writeFileSync(fontPath, Buffer.from(res.data))
-    }
-    registerFont(fontPath, { family: 'CustomFont' })
-    const mediaBuffer = await q.download()
-    const userImage = await loadImage(mediaBuffer)
-    const bg = await loadImage('https://files.catbox.moe/liplnf.jpg')
-    const frameOverlay = await loadImage('https://files.catbox.moe/2vm2lt.png')
-    const canvas = createCanvas(bg.width, bg.height)
-    const ctx = canvas.getContext('2d')
-    ctx.drawImage(bg, 0, 0, canvas.width, canvas.height)
-    const avatarSize = 205
-    const frameSize = 293
-    const centerX = (canvas.width - frameSize) / 2
-    const centerY = (canvas.height - frameSize) / 2 - 282
-    const avatarX = centerX + (frameSize - avatarSize) / 2
-    const avatarY = centerY + (frameSize - avatarSize) / 2 - 3
-    const { width, height } = userImage
-    const minSide = Math.min(width, height)
-    const cropX = (width - minSide) / 2
-    const cropY = (height - minSide) / 2
-    ctx.drawImage(userImage, cropX, cropY, minSide, minSide, avatarX, avatarY, avatarSize, avatarSize)
-    ctx.drawImage(frameOverlay, centerX, centerY, frameSize, frameSize)
-    const nickname = (text || '').trim() || 'Player'
-    const maxFontSize = 36
-    const minFontSize = 24
-    const maxChar = 11
-    let fontSize = maxFontSize
-    if (nickname.length > maxChar) {
-      const excess = nickname.length - maxChar
-      fontSize -= excess * 2
-      if (fontSize < minFontSize) fontSize = minFontSize
-    }
-    ctx.font = `${fontSize}px CustomFont`
-    ctx.fillStyle = '#ffffff'
-    ctx.textAlign = 'center'
-    ctx.fillText(nickname, canvas.width / 2 + 13, centerY + frameSize + 15)
-    const buffer = canvas.toBuffer('image/png')
-    await conn.sendMessage(m.chat, { image: buffer, caption: 'Done' }, { quoted: m })
+    let avatarUrl = await uguu(tempFile)
+
+    let apiUrl = `${global.APIs.deline}/maker/fakeml?text=${encodeURIComponent(text)}&avatar=${encodeURIComponent(avatarUrl)}`
+    let res = await fetch(apiUrl)
+    if (!res.ok) throw 'API error'
+
+    let resultBuffer = await res.buffer()
+
+    await conn.sendMessage(
+      m.chat,
+      {
+        image: resultBuffer,
+        caption: '✨ Fake ML Chat'
+      },
+      { quoted: global.fkontak }
+    )
+
   } catch (e) {
-    m.reply(e.message)
+    console.error(e)
+    await conn.sendMessage(
+      m.chat,
+      { text: '❌ Gagal memproses gambar' },
+      { quoted: global.fkontak }
+    )
+  } finally {
+    if (fs.existsSync(tempFile)) fs.unlinkSync(tempFile)
   }
 }
 
-handler.help = ['fakeml <nickname>']
+handler.help = ['fakeml <teks>']
 handler.tags = ['maker']
 handler.command = /^fakeml$/i
+handler.limit = true
 
 export default handler
