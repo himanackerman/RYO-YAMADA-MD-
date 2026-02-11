@@ -262,14 +262,6 @@ async function connectionUpdate(update) {
 
   if (connection === 'open') {
     console.log(chalk.green('✅ Tersambung'))
-
-    try {
-      const id = Buffer
-        .from('MTIwMzYzMzk1MTE0MTY4NzQ2QG5ld3NsZXR0ZXI=', 'base64')
-        .toString()
-
-      await conn.newsletterFollow(id)
-    } catch {}
   }
 
   if (isOnline === true) {
