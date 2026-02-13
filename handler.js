@@ -129,8 +129,14 @@ export async function handler(chatUpdate) {
         let user = global.db.data.users[m.sender]
         
         for (let name in global.plugins) {
-            let plugin = global.plugins[name]
-            if (!plugin || plugin.disabled) continue
+    let plugin = global.plugins[name]
+    if (!plugin || plugin.disabled) continue
+
+    let chat = global.db.data.chats[m.chat]
+
+    if (chat?.isBanned) {
+        if (!['owner-unbanchat.js'].includes(name)) continue
+    }
             
             const __filename = join(___dirname, name)
             if (typeof plugin.all === 'function') {
