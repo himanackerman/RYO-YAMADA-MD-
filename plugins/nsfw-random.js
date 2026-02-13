@@ -1,27 +1,78 @@
 import fetch from 'node-fetch'
 
-let handler = async (m, { conn, args, usedPrefix, command }) => {
+const APIS = [
+  { url: 'https://api.waifu.pics/nsfw/waifu', pick: j => j.url },
+  { url: 'https://nekos.life/api/v2/img/lewd', pick: j => j.url },
+  { url: 'https://nekobot.xyz/api/image?type=lewd', pick: j => j.message },
+  { url: 'https://neko-love.xyz/api/v1/lewd', pick: j => j.url },
+  { url: 'https://api.waifu.im/search?included_tags=ero', pick: j => j.images?.[0]?.url },
+  { url: 'https://nekos.best/api/v2/lewd', pick: j => j.results?.[0]?.url },
+  { url: 'https://hmtai.hatsunia.cfd/v2/random', pick: j => j.url }
+]
+
+async function tryFetch(api) {
+  const res = await fetch(api.url, {
+    headers: {
+      'User-Agent': 'Mozilla/5.0',
+      'Accept': 'application/json'
+    }
+  })
+
+  if (!res.ok) throw new Error()
+
+  const json = await res.json()
+  const img = api.pick(json)
+
+  if (!img) throw new Error()
+
+  return img
+}
+
+let handler = async (m, { conn }) => {
   try {
-    let res = await fetch(`https://fantox-apis.vercel.app/${command}`)
-    if (!res.ok) throw await res.text()
-    let json = await res.json()
-    if (!json.url) throw '❎ Error'
 
-    await m.reply('_📩 Mengirim ke private chat kamu..._')
+    await m.react('✨')
 
-    // Kirim ke private chat pengirim
-    await conn.sendFile(m.sender, json.url, 'img.jpg', `🚩 Random ${command}`, m)
+    let imageUrl = null
+
+    for (const api of APIS) {
+      try {
+        imageUrl = await tryFetch(api)
+        if (imageUrl) break
+      } catch {}
+    }
+
+    if (!imageUrl) {
+      await m.react('❌')
+      return m.reply('Semua API sedang bermasalah, coba lagi.')
+    }
+
+    await conn.sendMessage(m.chat, {
+      image: { url: imageUrl },
+      caption: '_Nih hehe_',
+      footer: 'ʀyᴏ yᴀᴍᴀᴅᴀ - ᴍᴅ',
+      buttons: [
+        {
+          buttonId: '.nsfw3',
+          buttonText: { displayText: '✨ Next' },
+          type: 1
+        }
+      ],
+      headerType: 4
+    }, { quoted: m })
 
   } catch (e) {
     console.error(e)
-    await m.reply('❎ Gagal ambil data.')
+    await m.react('❌')
+    m.reply('Terjadi kesalahan.')
   }
 }
 
-handler.help = ['genshin', 'swimsuit', 'schoolswimsuit', 'white', 'barefoot', 'touhou', 'gamecg', 'hololive', 'uncensored', 'sunglasses', 'glasses', 'weapon', 'shirtlift', 'chain', 'fingering', 'flatchest', 'torncloth', 'bondage', 'demon', 'wet', 'pantypull', 'headdress', 'headphone', 'tie', 'anusview', 'shorts','stokings', 'topless', 'beach', 'bunnygirl', 'bunnyear', 'idol', 'vampire', 'gun', 'maid', 'bra', 'nobra', 'bikini', 'whitehair', 'blonde', 'pinkhair', 'bed', 'ponytail', 'nude', 'dress', 'underwear', 'foxgirl', 'uniform', 'skirt', 'sex', 'sex2', 'sex3', 'breast', 'twintail', 'spreadpussy', 'tears', 'seethrough', 'breasthold', 'drunk', 'fateseries', 'spreadlegs', 'openshirt', 'headband', 'food', 'close', 'tree', 'nipples', 'erectnipples', 'horns', 'greenhair', 'wolfgirl', 'catgirl']
-handler.command = handler.help
+handler.help = ['nsfw3']
 handler.tags = ['nsfw']
+handler.command = /^nsfw3$/i
 handler.premium = true
 handler.group = false
+handler.limit = false
 
 export default handler
