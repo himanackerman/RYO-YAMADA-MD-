@@ -57,7 +57,7 @@ export async function handler(chatUpdate) {
             const chatDefaults = {
                 isBanned: false, welcome: false, detect: false, sWelcome: '', sBye: '', sPromote: '', sDemote: '',
                 delete: false, 
-                antiLink: false, viewonce: false, antiToxic: false, simi: false, autogpt: false, autoSticker: false, premium: false, premiumTime: false, nsfw: false, menu: true, rpgs: false, expired: 0
+                antiLink: false, viewonce: false, antiToxic: false, simi: false, autogpt: false, autoSticker: false, premium: false, premiumTime: false, nsfw: false, menu: true, rpgs: true, expired: 0
             }
             for (let key in chatDefaults) if (!(key in chat)) chat[key] = chatDefaults[key]
 
@@ -127,8 +127,13 @@ export async function handler(chatUpdate) {
         const ___dirname = path.join(path.dirname(fileURLToPath(import.meta.url)), './plugins')
 
         let user = global.db.data.users[m.sender]
-        
-        for (let name in global.plugins) {
+/*
+if (user && user.name && !user.registered) {
+    user.registered = true
+}
+*/
+
+for (let name in global.plugins) {
     let plugin = global.plugins[name]
     if (!plugin || plugin.disabled) continue
 
@@ -251,22 +256,25 @@ export async function handler(chatUpdate) {
     } catch (e) {
         console.error(e)
     } finally {
-        if (m.text) {
-            const quequeIndex = this.msgqueque.indexOf(m.id || m.key.id)
-            if (quequeIndex !== -1) this.msgqueque.splice(quequeIndex, 1)
-        }
-        
-        let user = global.db.data.users[m.sender]
-        if (user && user.autolevelup) user.exp += (m.exp || 0)
-        if (user && m.limit) user.limit -= (m.limit * 1)
-
-        try {
-            if (!opts['noprint']) await (await import(`./lib/print.js`)).default(m, this)
-        } catch (e) {
-            console.log(e)
-        }
-        if (opts['autoread']) await conn.readMessages([m.key])
+    if (m.text) {
+        const quequeIndex = this.msgqueque.indexOf(m.id || m.key.id)
+        if (quequeIndex !== -1) this.msgqueque.splice(quequeIndex, 1)
     }
+    
+    let user = global.db.data.users[m.sender]
+    if (user && user.autolevelup) user.exp += (m.exp || 0)
+    if (user && m.limit) user.limit -= (m.limit * 1)
+
+    // ✅ SAVE LANGSUNG
+    await global.db.write?.()
+
+    try {
+        if (!opts['noprint']) await (await import(`./lib/print.js`)).default(m, this)
+    } catch (e) {
+        console.log(e)
+    }
+    if (opts['autoread']) await conn.readMessages([m.key])
+}
 }
 
 export async function participantsUpdate({ id, participants, action }) {
@@ -282,31 +290,85 @@ export async function participantsUpdate({ id, participants, action }) {
 
     for (let user of participants) {
         user = user.id || user
+
         let pp = 'https://i.ibb.co/1s8T3sY/48f7ce63c7aa.jpg'
         try { pp = await this.profilePictureUrl(user, 'image') } catch {}
 
-        let username = this.getName(user) || user.split('@')[0]
-
+        // ================= WELCOME =================
         if (action === 'add') {
-            let api = `https://api.siputzx.my.id/api/canvas/welcomev5?username=${encodeURIComponent(username)}&guildName=${encodeURIComponent(groupName)}&memberCount=${memberCount + 1}&avatar=${encodeURIComponent(pp)}&background=${encodeURIComponent(global.welcomeBg)}&quality=90`
+
+            let defaultWelcome = `👋 Halo @user!
+
+Selamat datang di *${groupName}* 🎉`
+
+            let text = chat.sWelcome && chat.sWelcome.trim()
+                ? chat.sWelcome
+                : defaultWelcome
+
+            text = text
+                .replace('@user', '@' + user.split('@')[0])
+                .replace('@subject', groupName)
+                .replace('@desc', groupMetadata.desc || '')
+
+            let api = `https://api.siputzx.my.id/api/canvas/welcomev5?username=${encodeURIComponent('New Member')}&guildName=${encodeURIComponent(groupName)}&memberCount=${memberCount + 1}&avatar=${encodeURIComponent(pp)}&background=${encodeURIComponent(global.welcomeBg)}&quality=90`
+
             let res = await fetch(api)
             if (res.ok) {
                 let buffer = Buffer.from(await res.arrayBuffer())
-                await this.sendMessage(id, { image: buffer, caption: `Selamat datang @${user.split('@')[0]}`, mentions: [user] })
+
+                await this.sendMessage(id, {
+                    text,
+                    contextInfo: {
+                        mentionedJid: [user],
+                        externalAdReply: {
+                            title: `Welcome New Member 👋`,
+                            body: `Member ke ${memberCount + 1}`,
+                            thumbnail: buffer,
+                            mediaType: 1,
+                            renderLargerThumbnail: true
+                        }
+                    }
+                })
             }
         }
 
+        // ================= GOODBYE =================
         if (action === 'remove') {
-            let api = `https://api.siputzx.my.id/api/canvas/goodbyev5?username=${encodeURIComponent(username)}&guildName=${encodeURIComponent(groupName)}&memberCount=${memberCount}&avatar=${encodeURIComponent(pp)}&background=${encodeURIComponent(global.goodbyeBg)}&quality=90`
+
+            let defaultBye = `👋 Sampai jumpa @user`
+
+            let text = chat.sBye && chat.sBye.trim()
+                ? chat.sBye
+                : defaultBye
+
+            text = text
+                .replace('@user', '@' + user.split('@')[0])
+                .replace('@subject', groupName)
+                .replace('@desc', groupMetadata.desc || '')
+
+            let api = `https://api.siputzx.my.id/api/canvas/goodbyev5?username=${encodeURIComponent('Farewell')}&guildName=${encodeURIComponent(groupName)}&memberCount=${memberCount}&avatar=${encodeURIComponent(pp)}&background=${encodeURIComponent(global.goodbyeBg)}&quality=90`
+
             let res = await fetch(api)
             if (res.ok) {
                 let buffer = Buffer.from(await res.arrayBuffer())
-                await this.sendMessage(id, { image: buffer, caption: `Sampai jumpa @${user.split('@')[0]}`, mentions: [user] })
+
+                await this.sendMessage(id, {
+                    text,
+                    contextInfo: {
+                        mentionedJid: [user],
+                        externalAdReply: {
+                            title: `Farewell 👋`,
+                            body: groupName,
+                            thumbnail: buffer,
+                            mediaType: 1,
+                            renderLargerThumbnail: true
+                        }
+                    }
+                })
             }
         }
     }
 }
-
 export async function groupsUpdate(groupsUpdate) {
     if (opts['self']) return
     for (const groupUpdate of groupsUpdate) {
