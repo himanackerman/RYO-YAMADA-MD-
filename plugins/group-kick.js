@@ -9,40 +9,28 @@ let handler = async (m, { conn, reply, participants }) => {
     m.msg?.contextInfo?.mentionedJid?.[0] ||
     (m.quoted ? m.quoted.sender : null)
 
-  if (!target) {
-    return send(
-      '❌ Tag atau reply orang yang ingin dikeluarkan.\n\n' +
-      'Contoh:\n' +
-      '.kick @user\n' +
-      '.kick (reply pesan)'
-    )
-  }
+  if (!target)
+    return send('❌ Tag atau reply orang yang ingin dikeluarkan.')
 
   if (target === conn.user.jid)
     return send('❌ Tidak bisa mengeluarkan bot.')
 
-  let isTargetAdmin = participants.find(
-    p => p.id === target && p.admin
-  )
-
+  let isTargetAdmin = participants.find(p => p.id === target && p.admin)
   if (isTargetAdmin)
     return send('❌ Tidak bisa mengeluarkan admin grup.')
 
+  let kicked = false
   try {
-    await conn.groupParticipantsUpdate(
-      m.chat,
-      [target],
-      'remove'
-    )
-
-    await conn.sendMessage(m.chat, {
-      sticker: { url: 'https://files.catbox.moe/h4q4hq.webp' }
-    }, { quoted: m })
-
-  } catch (err) {
-    console.error('[KICK ERROR]', err)
-    send('❌ Gagal mengeluarkan anggota.')
+    const res = await conn.groupParticipantsUpdate(m.chat, [target], 'remove')
+    if (Array.isArray(res)) {
+      kicked = res[0]?.status === '200' || res[0]?.status === 200
+    } else kicked = true
+  } catch (e) {
+    console.error('[KICK ERROR]', e)
   }
+
+  if (!kicked)
+    return send('❌ Gagal mengeluarkan anggota.')
 }
 
 handler.help = ['kick @user', 'kick (reply pesan)']
@@ -51,7 +39,5 @@ handler.command = ['kick']
 
 handler.admin = true
 handler.botAdmin = true
-handler.owner = false
-handler.premium = false
 
 export default handler
