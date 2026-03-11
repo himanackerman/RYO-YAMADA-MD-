@@ -40,7 +40,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 `.trim()
 
     let buttons = [
-      { buttonId: `.yta ${video.url}`, buttonText: { displayText: '🎵 Audio' }, type: 1 },
+      { buttonId: `.ytmp3 ${video.url}`, buttonText: { displayText: '🎵 Audio' }, type: 1 },
       { buttonId: `.ytmp4 ${video.url}`, buttonText: { displayText: '🎬 Video' }, type: 1 }
     ]
 
