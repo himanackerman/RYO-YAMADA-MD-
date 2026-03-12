@@ -74,4 +74,4 @@ handler.before = async function (m, { conn }) {
   }
 
   return true
-         }
+}
