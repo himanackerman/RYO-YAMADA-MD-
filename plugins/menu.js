@@ -2,6 +2,7 @@
  * Ini sc free jangan di jual ya
  * Base Nao ESM 
  * Info script di CH https://whatsapp.com/channel/0029VbAYjQgKrWQulDTYcg2K
+ * creator : Hilman
  **/
 
 import moment from 'moment-timezone'
@@ -57,4 +58,158 @@ let handler = async (m, { conn, usedPrefix, command, text }) => {
       ? global.owner.some(v => (Array.isArray(v) ? v[0] : v) === who.split('@')[0])
       : false
 
-    const botname = global.namebot 
+    const botname = global.namebot || conn.user?.name || 'RyoYamada-MD'
+    const owner = global.nameown || 'Owner'
+    const version = global.version || '1.0.0'
+
+    const limit = (isOwner || user.premiumTime >= 1) ? '∞ Unlimited' : user.limit
+    const role = isOwner ? 'Owner' : (user.role || 'Newbie')
+    const totalexp = user.totalexp || user.exp || 0
+
+    const plugins = Object.values(global.plugins || {}).filter(p => !p.disabled)
+    const categories = {}
+
+    for (const p of plugins) {
+      const helps = Array.isArray(p.help) ? p.help : [p.help]
+      const tags = Array.isArray(p.tags) ? p.tags : [p.tags]
+
+      for (let tag of tags) {
+        if (!tag) continue
+        tag = tag.toLowerCase().trim()
+        if (!categories[tag]) categories[tag] = []
+        categories[tag].push({
+          helps,
+          limit: p.limit,
+          premium: p.premium,
+          owner: p.owner,
+          admin: p.admin,
+          prefix: !p.customPrefix
+        })
+      }
+    }
+
+    const menuType = (text || '').toLowerCase().trim()
+    const arrayMenu = Object.keys(categories).sort()
+
+    const rows = arrayMenu.map(v => ({
+      title: `${global.pmenus} ${toSmallCaps(formatTag(v))}`,
+      description: toSmallCaps(`Menu ${formatTag(v)}`),
+      id: `${usedPrefix}${command} ${v}`
+    }))
+
+    if (!menuType || (!categories[menuType] && menuType !== 'all')) {
+      await conn.sendMessage(
+        m.chat,
+        {
+          image: { url: THUMB },
+          caption: `
+${toSmallCaps('Hai, aku')} *${toSmallCaps('Ryo Yamada')}*,
+${toSmallCaps('siap bantu kamu hari ini — pilih menu yang kamu butuhin ya.')}
+
+${global.dashmenu} ${global.htjava}
+
+${global.dmenut} *${toSmallCaps('BOT INFO')}*
+${global.dmenub2} ${toSmallCaps('Bot')}     : ${toSmallCaps(botname)}
+${global.dmenub2} ${toSmallCaps('Owner')}   : ${toSmallCaps(owner)}
+${global.dmenub2} ${toSmallCaps('Version')} : ${version}
+${global.dmenuf}
+
+${global.dmenut} *${toSmallCaps('USER INFO')}*
+${global.dmenub2} ${toSmallCaps('Limit')} : ${limit}
+${global.dmenub2} ${toSmallCaps('Role')}  : ${toSmallCaps(role)}
+${global.dmenub2} XP    : ${totalexp}
+${global.dmenuf}
+
+${global.dmenut} *${toSmallCaps('KETERANGAN')}*
+${global.dmenub2} Ⓟ = ${toSmallCaps('Premium')}
+${global.dmenub2} Ⓛ = ${toSmallCaps('Limit')}
+${global.dmenub2} Ⓞ = ${toSmallCaps('Owner')}
+${global.dmenub2} Ⓐ = ${toSmallCaps('Admin')}
+${global.dmenuf}
+`.trim(),
+          interactiveButtons: [
+            {
+              name: 'single_select',
+              buttonParamsJson: JSON.stringify({
+                title: '✨ Pilih Menu',
+                sections: [
+                  {
+                    title: `💠 Total Menu ${arrayMenu.length}`,
+                    rows
+                  }
+                ]
+              })
+            },
+            {
+              name: 'quick_reply',
+              buttonParamsJson: JSON.stringify({
+                display_text: '✨ All MENU',
+                id: `${usedPrefix}${command} all`
+              })
+            }
+          ]
+        },
+        { quoted: global.fkontak }
+      )
+
+      if (MENU_SOUND) {
+        await conn.sendFile(
+          m.chat,
+          MENU_SOUND,
+          'menu.mp3',
+          null,
+          m,
+          true,
+          { type: 'audioMessage', ptt: true }
+        )
+      }
+      return
+    }
+
+    let menuText = []
+    const targets = menuType === 'all' ? arrayMenu : [menuType]
+
+    for (const tag of targets) {
+      menuText.push(
+        `${global.cmenut}${randomSquare()} ${toSmallCaps(formatTag(tag))} ${randomSquare()}${global.cmenuh}`
+      )
+
+      for (const item of categories[tag]) {
+        for (const cmd of item.helps) {
+          const prefix = item.prefix ? usedPrefix : ''
+
+          let info = ''
+          if (item.premium) info += ' Ⓟ'
+          if (item.limit) info += ' Ⓛ'
+          if (item.owner) info += ' Ⓞ'
+          if (item.admin) info += ' Ⓐ'
+
+          menuText.push(
+            `${global.cmenub}${prefix}${toSmallCaps(cmd)}${info}`
+          )
+        }
+      }
+
+      menuText.push(global.cmenuf)
+    }
+
+    await conn.sendMessage(
+      m.chat,
+      {
+        text: menuText.join('\n'),
+        ...adReply(`MENU ${menuType.toUpperCase()}`, botname)
+      },
+      { quoted: global.fkontak }
+    )
+
+  } catch (e) {
+    console.error(e)
+    m.reply('Menu error.')
+  }
+}
+
+handler.command = /^(menu|help)$/i
+handler.tags = ['main']
+handler.help = ['menu']
+
+export default handler
