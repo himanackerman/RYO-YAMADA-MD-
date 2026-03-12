@@ -1,20 +1,72 @@
+// Fitur Play CH 
+// Note : Setting ID Channel nya di config.js
+
 import axios from 'axios'
 import fs from 'fs'
 import path from 'path'
 import os from 'os'
-import { exec } from 'child_process'
+import { spawn } from 'child_process'
+
+let isSending = false
 
 let handler = async (m, { conn, text, command, usedPrefix, isOwner }) => {
+  if (!isOwner) return m.reply('Fitur ini hanya untuk owner bot!')
+  if (!text) return m.reply(`Contoh:\n${usedPrefix}${command} judul lagu`)
+  if (isSending) return m.reply('✨ Tunggu dulu, sedang mengirim ke channel...')
+
+  const idchannel = global.chId
+  if (!idchannel) return m.reply('ID channel belum diatur di config.js!')
+
+  const botname = global.botname || 'ʀyᴏ yᴀᴍᴀᴅᴀ - ᴍᴅ'
+
+  isSending = true
+  let tempInput, tempOutput
+
   try {
-    if (!isOwner) return m.reply('Fitur ini hanya untuk owner bot!')
-    if (!text) return m.reply(`Contoh:\n${usedPrefix}${command} judul lagu`)
-
-    let idchannel = global.chId
-    if (!idchannel) return m.reply('ID channel belum diatur di config.js!')
-
-    let botname = global.botname || 'RYO YAMADA - MD'
-
     await m.reply('✨ wait')
+
+    const api = `https://api.deline.web.id/downloader/ytplay?q=${encodeURIComponent(text)}`
+    const { data } = await axios.get(api)
+
+    if (!data?.status || !data?.result) {
+      throw 'Lagu tidak ditemukan.'
+    }
+
+    const { title, thumbnail, dlink } = data.result
+    if (!dlink) throw 'Data dari API tidak lengkap.'
+
+    const audioReq = await axios.get(dlink, {
+      responseType: 'arraybuffer',
+      headers: { 'User-Agent': 'Mozilla/5.0' }
+    })
+
+    tempInput = path.join(os.tmpdir(), `${Date.now()}_input.mp3`)
+    tempOutput = path.join(os.tmpdir(), `${Date.now()}_output.opus`)
+
+    fs.writeFileSync(tempInput, Buffer.from(audioReq.data))
+
+    await new Promise((resolve, reject) => {
+      const ffmpeg = spawn('ffmpeg', [
+        '-i', tempInput,
+        '-map_metadata', '-1',
+        '-vn',
+        '-ac', '1',
+        '-ar', '48000',
+        '-c:a', 'libopus',
+        '-b:a', '96k',
+        '-y',
+        tempOutput
+      ])
+
+      let stderr = ''
+      ffmpeg.stderr.on('data', d => stderr += d.toString())
+      ffmpeg.on('close', code => {
+        if (code === 0) resolve()
+        else reject(new Error(stderr))
+      })
+    })
+
+    const opusBuffer = fs.readFileSync(tempOutput)
 
     const newsletterInfo = {
       newsletterJid: idchannel,
@@ -22,82 +74,39 @@ let handler = async (m, { conn, text, command, usedPrefix, isOwner }) => {
       newsletterName: botname
     }
 
-    const api = `https://api.deline.web.id/downloader/ytplay?q=${encodeURIComponent(text)}`
-    const { data } = await axios.get(api)
-
-    if (!data || !data.status || !data.result) return m.reply('Lagu tidak ditemukan.')
-
-    const info = data.result
-    const title = info.title
-    const thumbnail = info.thumbnail
-    const downloadUrl = info.dlink
-    const youtubeUrl = info.url
-
-    if (!downloadUrl || !youtubeUrl) return m.reply('Data dari API tidak lengkap.')
-
-    const audioReq = await axios.get(downloadUrl, {
-      responseType: 'arraybuffer',
-      headers: { 'User-Agent': 'Mozilla/5.0' }
-    })
-
-    const tempInput = path.join(os.tmpdir(), `${Date.now()}_input.mp3`)
-    const tempOutput = path.join(os.tmpdir(), `${Date.now()}_output.opus`)
-
-    fs.writeFileSync(tempInput, Buffer.from(audioReq.data))
-
-    await new Promise((resolve, reject) => {
-      exec(
-        `ffmpeg -y -i "${tempInput}" -map_metadata -1 -vn -ac 1 -ar 48000 -c:a libopus -b:a 64k "${tempOutput}"`,
-        err => err ? reject(err) : resolve()
-      )
-    })
-
-    let thumbnailBuffer = null
-    try {
-      if (thumbnail) {
-        const thumbReq = await axios.get(thumbnail, {
-          responseType: 'arraybuffer',
-          timeout: 10000
-        })
-        thumbnailBuffer = Buffer.from(thumbReq.data)
-      }
-    } catch {}
-
-    const audioData = fs.readFileSync(tempOutput)
-
-    const messageData = {
-      audio: audioData,
+    await conn.sendMessage(idchannel, {
+      audio: opusBuffer,
       mimetype: 'audio/ogg; codecs=opus',
-      ptt: true
-    }
-
-    if (thumbnailBuffer) {
-      messageData.contextInfo = {
+      ptt: true,
+      contextInfo: {
         forwardingScore: 999,
-        isForwarded: true,
+        isForwarded: false,
         forwardedNewsletterMessageInfo: newsletterInfo,
         externalAdReply: {
           title: title.substring(0, 60),
-          body: 'RYO YAMADA - MD',
-          thumbnail: thumbnailBuffer,
+          body: botname,
+          thumbnailUrl: thumbnail,
+          sourceUrl: 'https://github.com/himanackerman',
           mediaType: 1,
-          renderLargerThumbnail: false,
-          sourceUrl: youtubeUrl,
-          mediaUrl: youtubeUrl,
+          renderLargerThumbnail: true,
           showAdAttribution: false
         }
       }
-    }
+    }, { quoted: null })
 
-    await conn.sendMessage(idchannel, messageData)
+    await conn.sendMessage(m.chat, {
+      text: `✨ Berhasil terkirim ke channel\n\n🎸 ${title}`
+    }, { quoted: global.fvn })
 
-    if (fs.existsSync(tempInput)) fs.unlinkSync(tempInput)
-    if (fs.existsSync(tempOutput)) fs.unlinkSync(tempOutput)
-
-    await m.reply(`Berhasil mengirim VN ke channel:\n${title}`)
   } catch (e) {
-    console.error(e)
-    m.reply('Terjadi kesalahan saat memproses permintaan.')
+    console.error('PlayCH Error:', e)
+    await conn.sendMessage(m.chat, {
+      text: '✨ Terjadi kesalahan saat memproses permintaan.'
+    }, { quoted: global.fvn })
+  } finally {
+    if (tempInput && fs.existsSync(tempInput)) fs.unlinkSync(tempInput)
+    if (tempOutput && fs.existsSync(tempOutput)) fs.unlinkSync(tempOutput)
+    isSending = false
   }
 }
 
