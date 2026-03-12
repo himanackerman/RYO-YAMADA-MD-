@@ -1,49 +1,46 @@
-import fetch from 'node-fetch'
+import axios from "axios"
 
 let handler = async (m, { conn, text, usedPrefix, command }) => {
-  await m.react('✨')
 
   if (!text) {
-    return conn.reply(
-      m.chat,
-      `Example : ${usedPrefix + command} Untuk apa hindia`,
-      m
-    )
+    return m.reply(`Contoh:
+${usedPrefix + command} https://open.spotify.com/track/xxxxx`)
   }
 
+  if (!text.includes("spotify.com")) {
+    return m.reply("Link Spotify tidak valid")
+  }
+
+  await m.react("🕒")
+
   try {
-    let api = `${global.APIs.faa}/faa/spotify-play?q=${encodeURIComponent(text)}`
-    let res = await fetch(api)
-    let json = await res.json()
 
-    if (!json.status) throw 'API error'
+    const api = `https://x.0cd.fun/dl/spotify?url=${encodeURIComponent(text)}`
+    const { data } = await axios.get(api)
 
-    let info = json.info
-    let dl = json.download.url
+    if (!data.status) throw "API error"
 
-    await conn.sendMessage(m.chat, {
-      audio: { url: dl },
-      mimetype: 'audio/mpeg',
-      fileName: `${info.title}.mp3`,
-      contextInfo: {
-        externalAdReply: {
-          title: info.title,
-          body: info.artist + ' • ' + info.album,
-          thumbnailUrl: info.thumbnail,
-          sourceUrl: info.spotify_url,
-          mediaType: 1,
-          renderLargerThumbnail: true
-        }
-      }
-    }, { quoted: m })
+    const audio = data.data.media[0].url
+
+    await conn.sendMessage(
+      m.chat,
+      {
+        audio: { url: audio },
+        mimetype: "audio/mpeg"
+      },
+      { quoted: m }
+    )
+
+    await m.react("✅")
 
   } catch (e) {
     console.error(e)
-    conn.reply(m.chat, '⚠️ Gagal mengambil audio.', m)
+    await m.react("❌")
+    m.reply("Gagal download lagu Spotify.")
   }
 }
 
-handler.help = ['spotify <judul lagu>']
+handler.help = ['spotify <url>']
 handler.tags = ['downloader']
 handler.command = /^spotify$/i
 handler.limit = true
