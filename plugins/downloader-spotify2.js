@@ -1,53 +1,76 @@
-import axios from "axios"
-import crypto from "crypto"
+/**
+ * Spotify play 
+ * -----------------------------
+ * Type   : Plugins ESM
+ * creator : Hilman
+ * Channel : https://whatsapp.com/channel/0029VbAYjQgKrWQulDTYcg2K
+ * API : https://api.nexray.web.id
+ */
+ 
+import axios from 'axios'
 
-const spotifyTrackDownloader = async (spotifyTrackUrl) => {
-  const client = new axios.create({
-    baseURL: 'https://spotisongdownloader.to',
-    headers: {
-      'Accept-Encoding': 'gzip, deflate, br',
-      'cookie': `PHPSESSID=${crypto.randomBytes(16).toString('hex')}; _ga=GA1.1.2675401.${Math.floor(Date.now()/1000)}`,
-      'referer': 'https://spotisongdownloader.to',
-      'Content-Type': 'application/x-www-form-urlencoded'
-    }
-  })
-  const { data: meta } = await client.get('/api/composer/spotify/xsingle_track.php', { params: { url: spotifyTrackUrl } })
-  await client.post('/track.php')
-  const { data: dl } = await client.post('/api/composer/spotify/ssdw23456ytrfds.php', {
-    url: spotifyTrackUrl,
-    zip_download: "false",
-    quality: "m4a"
-  })
-  return {...dl, ...meta}
+function formatNumber(num) {
+  return num?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
 }
 
-let handler = async (m, { conn, args }) => {
-  try {
-    if (!args[0]) return m.reply('*Example :* .spotify2 https://open.spotify.com/track/5ljSDO6UpH02bQllrMR4Al?si=FTVovKgRQf6kXt_04eNCAA')
-    let result = await spotifyTrackDownloader(args[0])
-    let text = `*${result.song_name}*
-    
-*Artist :* ${result.artist}
-*Album :* ${result.album_name}
-*Duration :* ${result.duration}
-*Release :* ${result.released}
-*Link :* ${result.url}
+let handler = async (m, { conn, text, usedPrefix, command }) => {
+  if (!text) throw `Contoh:\n${usedPrefix + command} Payung Teduh Mari Bercerita`
 
-> Send Audio Please Wait...`
-    if (result.img) {
-      await conn.sendMessage(m.chat, { image: { url: result.img }, caption: text }, { quoted: m })
-    } else {
-      await m.reply(text)
-    }
-    await conn.sendMessage(m.chat, { audio: { url: result.dlink }, mimetype: 'audio/mpeg' }, { quoted: m })
+  await m.react('🕒')
+
+  try {
+    let api = `https://api.nexray.web.id/downloader/spotifyplay?q=${encodeURIComponent(text)}`
+    let { data } = await axios.get(api)
+
+    if (!data.status) throw 'Lagu tidak ditemukan'
+
+    let v = data.result
+
+    let caption = `
+✦━━━「 Spotify Play 」━━━✦
+🎧 Title   : ${v.title}
+🎤 Artist  : ${v.artist}
+
+💿 Album   : ${v.album}
+🕰️ Duration: ${v.duration}
+🔥 Popular : ${formatNumber(v.popularity)}
+
+📅 Release : ${v.release_at}
+✦━━━━━━━━━━━━━━━━━━━━✦
+`.trim()
+
+    await conn.sendMessage(m.chat, {
+      text: caption,
+      contextInfo: {
+        externalAdReply: {
+          title: v.title,
+          body: v.artist,
+          thumbnailUrl: v.thumbnail,
+          sourceUrl: v.url,
+          mediaType: 1,
+          renderLargerThumbnail: true
+        }
+      }
+    }, { quoted: m })
+
+    await conn.sendMessage(m.chat, {
+      audio: { url: v.download_url },
+      mimetype: 'audio/mpeg',
+      fileName: v.title + '.mp3'
+    }, { quoted: m })
+
+    await m.react('✅')
+
   } catch (e) {
-    m.reply(e.message)
+    console.error(e)
+    await m.react('❌')
+    m.reply('❌ Gagal mengambil lagu')
   }
 }
 
-handler.help = ['spotify2 <url>']
-handler.command = ['spotify2']
+handler.help = ['spotifyplay', 'spplay']
 handler.tags = ['downloader']
-handler.limit = false
+handler.command = /^(spotifyplay|spplay)$/i
+handler.limit = true
 
 export default handler
