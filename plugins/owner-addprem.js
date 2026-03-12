@@ -46,7 +46,6 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
 📅 Tanggal : ${new Date().toLocaleDateString()}`
 
         await conn.sendMessage(m.chat, { text: teks, contextInfo: {} })
-        await conn.sendMessage(who, { text: teks, contextInfo: {} })
       } else {
         if (isNaN(hari)) throw `Hanya angka!`
 
@@ -68,7 +67,6 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
 📅 Berakhir : ${new Date(user.premiumTime).toLocaleDateString()}`
 
         await conn.sendMessage(m.chat, { text: teks, contextInfo: {} })
-        await conn.sendMessage(who, { text: teks, contextInfo: {} })
       }
       break
     }
@@ -84,7 +82,6 @@ let handler = async (m, { conn, args, usedPrefix, command }) => {
 Status premium dihapus pada ${new Date().toLocaleDateString()}.`
 
       await conn.sendMessage(m.chat, { text: teks, contextInfo: {} })
-      await conn.sendMessage(who, { text: teks, contextInfo: {} })
       break
     }
   }
