@@ -80,7 +80,7 @@ Contoh:
     const apis = [
       `https://api.nexray.eu.cc/maker/fakelobyml?avatar=${encodeURIComponent(imageUrl)}&nickname=${encodeURIComponent(nickname)}`,
       `https://api.ourin.my.id/api/fake-lobby-ml?avatar=${encodeURIComponent(imageUrl)}&nickname=${encodeURIComponent(nickname)}`,
-      `https://api.cuki.biz.id/api/maker/fakeml?apikey=cukimwah-wp6pw2n&avatar=${encodeURIComponent(imageUrl)}&name=${encodeURIComponent(nickname)}`
+      `${global.APIs.cuki}/api/maker/fakeml?apikey=${global.APIKeys[global.APIs.cuki]}&avatar=${encodeURIComponent(imageUrl)}&name=${encodeURIComponent(nickname)}`
     ]
 
     let result = null

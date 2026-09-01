@@ -103,12 +103,14 @@ global.APIs = {
     faa: 'https://api-faa.my.id',
     deline: 'https://api.deline.web.id',
     nexray: 'https://api.nexray.eu.cc',
-    kyzzz: 'https://api.kyzzz.eu.cc'
+    kyzzz: 'https://api.kyzzz.eu.cc',
+    cuki: 'https://api.cuki.biz.id'
     
 }
 
 global.APIKeys = {
-    'https://api.kyzzz.eu.cc': ''  // isi apikey 
+    'https://api.kyzzz.eu.cc': '',  // isi apikey 
+    'https://api.cuki.biz.id': process.env.CUKI_APIKEY || ''  // isi apikey lewat env
 }
 
 global.flaaa2 = [
