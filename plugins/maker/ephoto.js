@@ -45,10 +45,12 @@ const handler = async (m, { conn, text, command, usedPrefix }) => {
 		await m.react("🕒");
 
 		const api = global.APIs.kyzzz;
-		const apikey = global.APIKeys[api];
+		const apikey = process.env.KYZZZ_API_KEY || global.APIKeys[api];
+
+		if (!apikey) throw new Error("API key not configured");
 
 		const res = await fetch(
-			`${api}/api/ephoto/${endpoint[command]}?text=${encodeURIComponent(text)}&apikey=${apikey}`
+			`${api}/api/ephoto/${endpoint[command]}?text=${encodeURIComponent(text)}&apikey=${encodeURIComponent(apikey)}`
 		);
 
 		if (!res.ok) throw new Error(`HTTP ${res.status}`);
