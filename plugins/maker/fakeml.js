@@ -23,7 +23,7 @@ Atau kirim gambar langsung dengan caption:
 *${usedPrefix}fakeml NamaKamu*
 
 Contoh:
-*${usedPrefix}fakeml Hilman*`
+*${usedPrefix}fakeml elaina*`
   }
 
   const nickname = text?.trim()
@@ -32,12 +32,10 @@ Contoh:
     throw `Nickname tidak boleh kosong!
 
 Contoh:
-*${usedPrefix}fakeml Hilman*`
+*${usedPrefix}fakeml elaina*`
   }
 
   try {
-    await m.react('🕒')
-
     let imageBuffer
 
     if (quotedImage) {
@@ -77,39 +75,21 @@ Contoh:
       throw new Error('Gagal upload gambar ke Uguu')
     }
 
-    const apis = [
-      `https://api.nexray.eu.cc/maker/fakelobyml?avatar=${encodeURIComponent(imageUrl)}&nickname=${encodeURIComponent(nickname)}`,
-      `https://api.ourin.my.id/api/fake-lobby-ml?avatar=${encodeURIComponent(imageUrl)}&nickname=${encodeURIComponent(nickname)}`,
-      `https://api.cuki.biz.id/api/maker/fakeml?apikey=cukimwah-wp6pw2n&avatar=${encodeURIComponent(imageUrl)}&name=${encodeURIComponent(nickname)}`
-    ]
+    const url =
+      `https://api.nexray.eu.cc/maker/fakelobyml` +
+      `?avatar=${encodeURIComponent(imageUrl)}` +
+      `&nickname=${encodeURIComponent(nickname)}`
 
-    let result = null
+    const response = await axios.get(url, {
+      responseType: 'arraybuffer',
+      timeout: 30000
+    })
 
-    for (const url of apis) {
-      try {
-        const response = await axios.get(url, {
-          responseType: 'arraybuffer',
-          timeout: 30000,
-          validateStatus: () => true
-        })
+    const result = Buffer.from(response.data)
+    const contentType = response.headers['content-type'] || ''
 
-        const buffer = Buffer.from(response.data)
-        const contentType = response.headers['content-type'] || ''
-
-        if (
-          response.status >= 200 &&
-          response.status < 300 &&
-          contentType.startsWith('image/') &&
-          buffer.length > 1000
-        ) {
-          result = buffer
-          break
-        }
-      } catch {}
-    }
-
-    if (!result) {
-      throw new Error('Semua API fake lobby ML gagal')
+    if (!contentType.startsWith('image/') || result.length <= 1000) {
+      throw new Error('API Nexray tidak mengembalikan gambar yang valid')
     }
 
     await conn.sendMessage(
@@ -123,12 +103,8 @@ ${nickname}`
       },
       { quoted: m }
     )
-
-    await m.react('✅')
   } catch (e) {
     console.error('FAKEML ERROR:', e)
-
-    await m.react('❌')
 
     throw `Gagal membuat Fake Lobby ML.
 
@@ -141,6 +117,6 @@ handler.help = ['fakeml <nickname>']
 handler.tags = ['maker']
 handler.command = /^fakeml$/i
 handler.limit = true
-handler.register = true
+handler.register = false
 
 export default handler
