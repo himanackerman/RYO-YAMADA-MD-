@@ -24,17 +24,17 @@ const readMore = more.repeat(4001)
 
 /*============= MAIN INFO =============*/
 global.usePairingCode = true   // true = pairing code, false = QR
-global.pairingNumber = '9647830812841' // isi buat pairing code 
+global.pairingNumber = '62xxx' // isi buat pairing code 
 global.pairingCode = '12345678'   // opsional, 8 karakter
 global.owner = [
-  ['6285523568687', 'Hilman', true]
+  ['628xxx', 'Hilman', true]
 ]
 global.mods = []
 global.prems = []
-global.nomorbot = '9647830812841' // ubah pake no kalian
-global.nomorown = '6285523568687'// ubah pake no kalian
+global.nomorbot = '' // ubah pake no kalian
+global.nomorown = ''// ubah pake no kalian
 global.nameown = 'Hilman' //nama Owner
-global.version = '11.5.0'
+global.version = '12.5.0'
 global.autotyping = false // default mati
 global.autorecording = false // default mati
 global.prefix = '.' // custom pairing kosongan kalo mau nonprefix 
@@ -69,7 +69,7 @@ global.capikey = "-" // capikey / pltc lu
 
 /*============= CHANNEL =============*/
 global.linkch = 'https://whatsapp.com/channel/0029VbAYjQgKrWQulDTYcg2K'
-global.chId = '120363403952337689@newsletter' // id CH
+global.chId = '120363395114168746@newsletter' // id CH
 global.newsletterName = 'ʀyᴏ yᴀᴍᴀᴅᴀ - ᴍᴅ' // anu 
 
 /*============= TAMPILAN =============*/
