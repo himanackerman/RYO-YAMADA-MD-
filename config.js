@@ -37,7 +37,7 @@ global.nameown = 'Hilman' //nama Owner
 global.version = '12.5.0'
 global.autotyping = false // default mati
 global.autorecording = false // default mati
-global.prefix = '.' // custom pairing kosongan kalo mau nonprefix 
+global.prefix = '.' // custom prefix kosongan kalo mau nonprefix 
 global.backupGroup = '' // opsional kalo mau kirim backup ke grup tertentu isi id grup
 
 /*============= WATERMARK =============*/
