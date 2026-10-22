@@ -1,0 +1,8 @@
+database.json
+package-lock.json
+node_modules/
+tmp/
+.env
+session/
+sessions/
+auth_info/
