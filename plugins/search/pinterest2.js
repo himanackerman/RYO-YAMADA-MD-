@@ -1,90 +1,69 @@
-import axios from 'axios'
+let handler = async (m, { conn, text, usedPrefix, command }) => {
+  if (!text?.trim()) {
+    return m.reply(
+      `Masukkan kata kunci pencarian.\n\nContoh: *${usedPrefix + command} ryo yamada anime*`
+    )
+  }
 
-let handler = async (m, {
-conn,
-text,
-usedPrefix,
-command
-}) => {
-if (!text) {
-return m.reply(
-'Contoh:\n' +
-usedPrefix + command + ' ryo yamada anime'
-)
+  await m.react('🕒')
+
+  try {
+    const url = new URL(global.APIs.nexray + '/search/pinterest')
+    url.searchParams.append('q', text.trim())
+
+    const res = await fetch(url)
+    const data = await res.json()
+
+    if (
+      !data?.status ||
+      !Array.isArray(data.result) ||
+      data.result.length === 0
+    ) {
+      await m.react('❌')
+      return m.reply(' Hasil Pinterest tidak ditemukan.')
+    }
+
+    const results = data.result
+      .filter(v => v?.images_url)
+      .slice(0, 10)
+
+    if (!results.length) {
+      await m.react('❌')
+      return m.reply(' Tidak ada gambar Pinterest yang valid ditemukan.')
+    }
+
+    const carousel = new Carousel(conn)
+      .setBody(`*Pinterest Search*\n\n *Query* : ${text.trim()}`)
+      .setFooter(`${results.length} Hasil`)
+
+    for (const item of results) {
+      const imageUrl = item.images_url
+      const title = item.grid_title || 'Pinterest Image'
+
+      carousel.addCard(
+        await new Button(conn)
+          .setTitle(title)
+          .setBody(` *Title* : ${title}`)
+          .setFooter('Pinterest Search')
+          .setImage(imageUrl)
+          .addUrl(' Open', imageUrl)
+          .toCard()
+      )
+    }
+
+    await carousel.send(m.chat, { quoted: m })
+    await m.react('✅')
+  } catch (e) {
+    console.error('[Pinterest Search]', e)
+    await m.react('❌')
+    await m.reply(` Gagal mencari Pinterest:\n${e.message || 'Terjadi kesalahan.'}`)
+  }
 }
 
-await m.react('🕒')
-
-try {
-const { data } = await axios.get(
-global.APIs.nexray + '/search/pinterest',
-{
-params: {
-q: text
-}
-}
-)
-
-if (
-  !data?.status ||
-  !Array.isArray(data.result) ||
-  data.result.length === 0
-) {
-  return m.reply('Tidak ada hasil ditemukan.')
-}
-
-const results = data.result
-  .filter(v => v?.images_url)
-  .slice(0, 10)
-
-if (!results.length) {
-  return m.reply('Tidak ada gambar ditemukan.')
-}
-
-const rich = new AIRich(conn)
-  .setTitle('Pinterest Search')
-  .addText(
-    'Hasil pencarian untuk: ' + text + '\n' +
-    'Total: ' + results.length + ' gambar'
-  )
-
-for (const [i, item] of results.entries()) {
-  const title =
-    item.grid_title ||
-    'Pinterest Image ' + (i + 1)
-
-  rich.addImage(item.images_url, {
-    id: 'image_' + i
-  })
-
-  rich.addText(title, {
-    id: 'title_' + i
-  })
-}
-
-await rich.send(m.chat, {
-  quoted: m
-})
-
-await m.react('✅')
-
-} catch (e) {
-console.error(e)
-
-await m.react('❌')
-
-return m.reply(
-  'Gagal mengambil hasil Pinterest: ' +
-  (e.message || e)
-)
-
-}
-}
-
-handler.command = /^(pin2|pinterest2)$/i
-handler.help = ['pin2 <query>', 'pinterest2 <query>']
+handler.help = ['pinterest2 <query>']
 handler.tags = ['search']
-handler.register = true
+handler.command = /^(pin2|pinterest2)$/i
+handler.register = false
 handler.limit = true
 
 export default handler
