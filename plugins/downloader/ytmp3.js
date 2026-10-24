@@ -20,15 +20,15 @@ let handler = async (m, { conn, text }) => {
 
     const data = await youtube(url, {
       downloadType: 'audio',
-      quality: '128kbps'
+      quality: '128'
     })
 
-    if (!data?.url) {
-      throw new Error('Gagal mendapatkan link download audio.')
+    if (!data?.buffer) {
+      throw new Error('Gagal mendapatkan file audio.')
     }
 
     await conn.sendMessage(m.chat, {
-      audio: { url: data.url },
+      audio: data.buffer,
       mimetype: 'audio/mpeg',
       fileName: `${data.title || 'audio'}.mp3`,
       ptt: false
@@ -38,7 +38,7 @@ let handler = async (m, { conn, text }) => {
   } catch (e) {
     console.error(e)
     await m.react('❌')
-    throw e.message || 'Terjadi kesalahan.'
+    throw e.message || 'Terjadi kesalahan saat mengunduh audio.'
   }
 }
 
