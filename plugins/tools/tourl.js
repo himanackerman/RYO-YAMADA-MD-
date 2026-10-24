@@ -1,99 +1,50 @@
 import axios from 'axios'
 import FormData from 'form-data'
-import { generateWAMessageFromContent, proto } from 'baileys'
 
 let handler = async (m, { conn }) => {
-  const q = m.quoted || m
-  const mime = (q.msg || q).mimetype || ''
+  let q = m.quoted ? m.quoted : m
+  let mime = (q.msg || q).mimetype || ''
 
-  if (!mime) {
-    throw 'Reply atau kirim file yang mau diupload.'
-  }
-
-  await m.react('🕒')
+  if (!mime) return m.reply('✨ Reply/kirim file yang mau diupload.')
 
   try {
-    const buffer = await q.download()
+    await m.react('✨')
 
-    if (!buffer) {
-      throw new Error('Gagal download media.')
-    }
+    let buffer = await q.download()
+    if (!buffer) throw 'Gagal download media'
 
-    const ext = mime.split('/')[1]?.split(';')[0] || 'bin'
-    const filename = q.fileName || `upload_${Date.now()}.${ext}`
+    let ext = mime.split('/')[1] || 'bin'
+    let filename = `upload_${Date.now()}.${ext}`
 
     const form = new FormData()
-
-    form.append('reqtype', 'fileupload')
-
-    form.append('fileToUpload', buffer, {
-      filename,
-      contentType: mime
-    })
+    form.append('file', buffer, filename)
 
     const { data } = await axios.post(
-      'https://catbox.moe/user/api.php',
+      'https://cdn.nekohime.site/upload',
       form,
-      {
-        headers: form.getHeaders(),
-        timeout: 60000,
-        maxBodyLength: Infinity,
-        maxContentLength: Infinity
-      }
+      { headers: form.getHeaders() }
     )
 
-    const url = typeof data === 'string' ? data.trim() : ''
+    if (!data?.files?.length) throw 'Upload gagal'
 
-    if (!url.startsWith('https://')) {
-      throw new Error(url || 'Gagal upload ke Catbox.')
-    }
+    let url = data.files[0].url || data.files[0]
 
-    const msg = generateWAMessageFromContent(m.chat, {
-      viewOnceMessage: {
-        message: {
-          interactiveMessage: proto.Message.InteractiveMessage.create({
-            body: proto.Message.InteractiveMessage.Body.create({
-              text: `✨ *Upload Berhasil!*\n\n${url}`
-            }),
-            footer: proto.Message.InteractiveMessage.Footer.create({
-              text: 'ʀʏᴏ ʏᴀᴍᴀᴅᴀ - ᴍᴅ'
-            }),
-            nativeFlowMessage: proto.Message.InteractiveMessage.NativeFlowMessage.create({
-              buttons: [
-                {
-                  name: 'cta_copy',
-                  buttonParamsJson: JSON.stringify({
-                    display_text: 'Copy URL',
-                    copy_code: url
-                  })
-                }
-              ]
-            })
-          })
-        }
-      }
-    }, {})
+    await new Button(conn)
+      .setBody(`✨ *Berhasil Upload ke CDN!*\n\n✨ ${url}`)
+      .addCopy('✨ Salin URL', url, { icon: 'DOCUMENT' })
+      .send(m.chat, { quoted: m })
 
-    await conn.relayMessage(
-      m.chat,
-      msg.message,
-      { messageId: msg.key.id }
-    )
-
-    await m.react('✅')
   } catch (e) {
     console.error(e)
-
-    await m.react('❌')
-
-    throw e.message || String(e)
+    m.reply('✨ Gagal upload ke CDN.')
   }
 }
 
 handler.help = ['tourl']
 handler.tags = ['tools']
 handler.command = /^tourl$/i
-handler.limit = true
-handler.register = true
+handler.limit = false
+handler.register = false
 
 export default handler
+                             
