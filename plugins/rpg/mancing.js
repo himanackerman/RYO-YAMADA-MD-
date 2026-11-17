@@ -24,19 +24,19 @@ let handler = async (m, { conn, usedPrefix }) => {
         let ikan11 = Math.floor(Math.random() * 5)
 
         let hsl = `
-*📮 Hasil tangkapan Mu*
+*\`Hasil Tangkapan Mu\`*
 ${ikan1 ? `
-🦀 Kepiting: ${ikan1}`: ''} ${ikan2 ? `
-🦞 Lobster: ${ikan2}`: ''} ${ikan3 ? `
-🦐 Udang: ${ikan3}`: ''} ${ikan4 ? `
-🦑 Cumi: ${ikan4}`: ''} ${ikan5 ? `
-🐙 Gurita: ${ikan5}`: ''} ${ikan6 ? `
-🐡 Buntal: ${ikan6}`: ''} ${ikan7 ? `
-🐠 Dory: ${ikan7}`: ''} ${ikan8 ? `
-🐳 Orca: ${ikan8}`: ''} ${ikan9 ? `
-🐬 Lumba: ${ikan9}`: ''} ${ikan10 ? `
-🐋 Paus: ${ikan10}`: ''} ${ikan11 ? `
-🦈 Hiu: ${ikan11}`: ''}
+✿ 🦀 Kepiting : ${ikan1}`: ''} ${ikan2 ? `
+✿ 🦞 Lobster : ${ikan2}`: ''} ${ikan3 ? `
+✿ 🦐 Udang : ${ikan3}`: ''} ${ikan4 ? `
+✿ 🦑 Cumi : ${ikan4}`: ''} ${ikan5 ? `
+✿ 🐙 Gurita : ${ikan5}`: ''} ${ikan6 ? `
+✿ 🐡 Buntal : ${ikan6}`: ''} ${ikan7 ? `
+✿ 🐠 Dory : ${ikan7}`: ''} ${ikan8 ? `
+✿ 🐳 Orca : ${ikan8}`: ''} ${ikan9 ? `
+✿ 🐬 Lumba : ${ikan9}`: ''} ${ikan10 ? `
+✿ 🐋 Paus : ${ikan10}`: ''} ${ikan11 ? `
+✿ 🦈 Hiu : ${ikan11}`: ''}
 `.trim()
 
         user.kepiting += ikan1

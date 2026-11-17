@@ -12,7 +12,7 @@ let handler = async (m) => {
       return m.reply('❌ Jadwal bola tidak ditemukan.')
     }
 
-    const caption = `   *Jadwal Bola*
+    const caption = `*\`Jadwal Bola\`*
 
 ${data.result.map((v, i) => `${i + 1}. ${v}`).join('\n')}`
 

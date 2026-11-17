@@ -19,7 +19,7 @@ ${usedPrefix + command} Swim Chase Atlantic`)
 
     const list = data.result.slice(0, 10)
 
-    let caption = `   *Spotify Search*\n\n`
+    let caption = `*\`Spotify Search\`*\n\n`
 
     for (let i = 0; i < list.length; i++) {
       const v = list[i]

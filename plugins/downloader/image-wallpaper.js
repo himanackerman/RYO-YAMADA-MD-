@@ -1,4 +1,4 @@
-import { wallpaper } from "../../lib/scrape.js";
+import { wallpaper } from "../../lib/scrape/scrape.js";
 
 let handler = async (m, { conn, command, text, usedPrefix }) => {
     let query = text

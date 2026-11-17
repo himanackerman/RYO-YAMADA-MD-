@@ -11,7 +11,7 @@ let handler = async (m, { conn, usedPrefix, text }) => {
 	user.exp += exp * 1
 	user.kardus += kardus * 1
 	user.lastmaling = new Date * 1
-    m.reply(`Selamat kamu mendapatkan : \n💰+${toRupiah(money)} Money\📦+${toRupiah(kardus)} Kardus\n✨+${toRupiah(exp)} Exp`)
+    m.reply(`*\`HASIL MALING\`*\n\n✿ 💰 Money : +${toRupiah(money)}\n✿ 📦 Kardus : +${toRupiah(kardus)}\n✿ ✨ Exp : +${toRupiah(exp)}`)
     setTimeout(() => {
         conn.reply(m.chat, `Yuk waktunya Maling lagi 👋…`, m)
     }, timeout)

@@ -30,9 +30,9 @@ let handler = async (m, { conn, args }) => {
     }
 
     let caption = `
-✨ *DOUYIN DOWNLOADER*
+*\`Douyin Downloader\`*
 
-📌 *Judul:* ${title}
+✿ Judul : ${title}
 `.trim()
 
     let thumbBuffer = null

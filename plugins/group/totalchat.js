@@ -1,10 +1,10 @@
 import fs from 'fs'
 import path from 'path'
 
-const chatDbPath = './lib/chat.json'
+const chatDbPath = './lib/json/chat.json'
 
-if (!fs.existsSync('./lib')) {
-fs.mkdirSync('./lib')
+if (!fs.existsSync('./lib/json')) {
+fs.mkdirSync('./lib/json', { recursive: true })
 }
 
 if (!fs.existsSync(chatDbPath)) {

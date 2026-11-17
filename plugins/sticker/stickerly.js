@@ -456,7 +456,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   const firstPackWithCover = packs.find(v => v.prefix && v.files?.length)
   const coverUrl = firstPackWithCover ? firstPackWithCover.prefix + firstPackWithCover.files[0] : null
 
-  const caption = `❀ *HASIL STICKER.LY*\n\nHasil pencarian untuk: *${text}*\nTotal: ${packs.length} pack`
+  const caption = `✿ *HASIL STICKER.LY*\n\nHasil pencarian untuk: *${text}*\nTotal: ${packs.length} pack`
 
   const btn = new Button(conn)
     .setBody(caption)
@@ -464,7 +464,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
   if (coverUrl) btn.setImage(coverUrl)
 
-  btn.addSelection('❀ Pilih Sticker Pack')
+  btn.addSelection('✿ Pilih Sticker Pack')
   btn.makeSection('Daftar Pack')
 
   packs.forEach((v, i) => {

@@ -15,12 +15,12 @@ let handler = async (m) => {
     ['gelas', '🥛 Gelas'],
     ['plastik', '🛍️ Plastik']
   ]
-  .map(([k, label]) => user[k] > 0 ? `${label}: ${user[k]}` : null)
+  .map(([k, label]) => user[k] > 0 ? `✿ ${label} : ${user[k]}` : null)
   .filter(Boolean)
   .join('\n')
 
   let teks = isi
-    ? `📮 *ISI KARUNG KAMU*\n\n${isi}`
+    ? `*\`ISI KARUNG KAMU\`*\n\n${isi}`
     : '📮 Karung kamu masih kosong!'
 
   m.reply(teks)

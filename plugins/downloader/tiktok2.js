@@ -104,9 +104,9 @@ const finalTitle =
     : title
 
 const caption =
-  'TikTok Downloader\n\n' +
-  'Judul: ' + finalTitle + '\n' +
-  'Uploader: ' + uploader
+  '*`TikTok Downloader`*\n\n' +
+  '✿ Judul : ' + finalTitle + '\n' +
+  '✿ Uploader : ' + uploader
 
 if (
   res.type === 'image' &&

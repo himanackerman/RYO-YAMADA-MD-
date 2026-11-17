@@ -47,7 +47,7 @@ let handler = async (m, { conn, usedPrefix, command }) => {
     }
   })
 
-  let caption = `📦 *DAFTAR PLUGIN BOT*\nTotal: *${files.length}* plugin\n\n`
+  let caption = `*\`DAFTAR PLUGIN BOT\`*\n✿ Total : ${files.length} plugin\n\n`
 
   for (const [folder, pluginList] of Object.entries(grouped)) {
     caption += `📁 *Folder:* ${folder.toUpperCase()}\n`

@@ -1,4 +1,4 @@
-import { sticker } from '../../lib/sticker.js'
+import { sticker } from '../../lib/core/sticker.js'
 
 let handler = async (m, { conn, args, command }) => {
   const text = args.join(' ') || (m.quoted && m.quoted.text)

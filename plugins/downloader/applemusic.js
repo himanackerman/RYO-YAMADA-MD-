@@ -37,7 +37,7 @@ ${usedPrefix + command} https://music.apple.com/id/song/genit/535063959`)
 
     const r = data.result
 
-    const caption = `   *Apple Music Downloader*
+    const caption = `*\`Apple Music Downloader\`*
 
 ✿ Title : ${r.name}
 ✿ Artist : ${r.artist}

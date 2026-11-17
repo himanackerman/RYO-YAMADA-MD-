@@ -52,7 +52,7 @@ let handler = async (m, { args, usedPrefix, command, conn }) => {
       document: { url: tmpPath },
       fileName: name,
       mimetype: mimeType || 'application/octet-stream',
-      caption: `File berhasil diunduh!\n\n• Nama: ${name}\n• Ukuran: ${await formatSize(size)}`
+      caption: `*\`Google Drive Downloader\`*\n\n✿ Nama : ${name}\n✿ Ukuran : ${await formatSize(size)}`
     }, { quoted: m })
 
   } catch (err) {

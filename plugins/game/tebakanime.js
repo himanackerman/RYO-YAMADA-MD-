@@ -18,10 +18,10 @@ let handler = async (m, { conn }) => {
   let caption = `
 🖼️ *TEBAK ANIME*
 
-⏱️ Timeout ${timeout / 1000} detik
-💎 Bonus ${poin} XP
+✿ Timeout : ${timeout / 1000} detik
+✿ Bonus : ${poin} XP
 
-Ketik *nyerah* untuk menyerah
+✿ Menyerah : Ketik *nyerah*
 `.trim()
 
   let msg = await conn.sendMessage(

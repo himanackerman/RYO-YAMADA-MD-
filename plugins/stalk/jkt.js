@@ -27,25 +27,25 @@ const handler = async (m, { conn, text, usedPrefix, command }) => {
 
 		const caption = `*\`JKT48 Stalker\`*
 
-✿ *\`Nama\`* : ${d.name}
-✿ *\`Nickname\`* : ${d.nickname}
-✿ *\`Full Name\`* : ${d.fullname}
-✿ *\`Team\`* : ${d.team}
-✿ *\`Group\`* : ${d.group}
-✿ *\`Generasi\`* : ${d.generation}
-✿ *\`Tanggal Lahir\`* : ${new Date(d.birthdate).toLocaleDateString("id-ID")}
-✿ *\`Golongan Darah\`* : ${d.bloodType}
-✿ *\`Tinggi Badan\`* : ${d.height}
-✿ *\`Graduate\`* : ${d.graduate ? "Ya ✅" : "Tidak ❌"}
+✿ Nama : ${d.name}
+✿ Nickname : ${d.nickname}
+✿ Full Name : ${d.fullname}
+✿ Team : ${d.team}
+✿ Group : ${d.group}
+✿ Generasi : ${d.generation}
+✿ Tanggal Lahir : ${new Date(d.birthdate).toLocaleDateString("id-ID")}
+✿ Golongan Darah : ${d.bloodType}
+✿ Tinggi Badan : ${d.height}
+✿ Graduate : ${d.graduate ? "Ya ✅" : "Tidak ❌"}
 
-✿ *\`Jikosokai\`* :
+✿ Jikosokai :
 ${d.jikosokai}
 
-✿ *\`Instagram\`* : ${d.socials.find(v => v.title === "Instagram")?.url || "-"}
-✿ *\`Twitter\`* : ${d.socials.find(v => v.title === "Twitter")?.url || "-"}
-✿ *\`TikTok\`* : ${d.socials.find(v => v.title === "TikTok")?.url || "-"}
-✿ *\`Showroom\`* : ${d.socials.find(v => v.title === "Showroom")?.url || "-"}
-✿ *\`IDN\`* : ${d.socials.find(v => v.title === "IDN")?.url || "-"}`;
+✿ Instagram : ${d.socials.find(v => v.title === "Instagram")?.url || "-"}
+✿ Twitter : ${d.socials.find(v => v.title === "Twitter")?.url || "-"}
+✿ TikTok : ${d.socials.find(v => v.title === "TikTok")?.url || "-"}
+✿ Showroom : ${d.socials.find(v => v.title === "Showroom")?.url || "-"}
+✿ IDN : ${d.socials.find(v => v.title === "IDN")?.url || "-"}`;
 
 		let image;
 

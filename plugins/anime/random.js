@@ -13,7 +13,7 @@ let handler = async (m, { conn, command }) => {
     let img = json[Math.floor(Math.random() * json.length)]
 
     await new AIRich(conn)
-      .setFooter(`❀ Character : ${command}`)
+      .setFooter(`✿ Character : ${command}`)
       .addImage(img)
       .send(m.chat, { quoted: m })
 

@@ -12,7 +12,7 @@ let handler = async (m, { conn }) => {
   if (id in conn.game)
     return conn.reply(m.chat, 'Masih ada soal belum terjawab di chat ini', conn.game[id][0])
 
-  let src = JSON.parse(fs.readFileSync('./json/tebaktebakan.json', 'utf-8'))
+  let src = JSON.parse(fs.readFileSync('./lib/json/tebaktebakan.json', 'utf-8'))
   let json = src[Math.floor(Math.random() * src.length)]
 
   let caption = `
@@ -20,10 +20,10 @@ let handler = async (m, { conn }) => {
 
 ${json.soal}
 
-⏳ Timeout ${timeout / 1000} detik
-💡 Ketik *hkan* untuk bantuan
-🏳️ Ketik *nyerah* untuk menyerah
-🎁 Bonus: ${poin} XP
+✿ Timeout : ${timeout / 1000} detik
+✿ Bantuan : Ketik *hkan*
+✿ Menyerah : Ketik *nyerah*
+✿ Bonus : ${poin} XP
 `.trim()
 
   let msg = await m.reply(caption)

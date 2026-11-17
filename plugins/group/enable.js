@@ -24,8 +24,9 @@ let handler = async (m, { conn, usedPrefix, command, args, isOwner, isAdmin, isR
   if (!('detect' in chat)) chat.detect = true
   if (!('rpgs' in chat)) chat.rpgs = true
   if (!('autolevelup' in chat)) chat.autolevelup = false
+  if (!('autosolat' in chat)) chat.autosolat = false
   if (global.autocorrect === undefined)
-  global.autocorrect = true
+    global.autocorrect = botSettings.autocorrect ?? false
 
   let type = (args[0] || '').toLowerCase()
   let isAll = false
@@ -89,16 +90,25 @@ let handler = async (m, { conn, usedPrefix, command, args, isOwner, isAdmin, isR
       chat.rpgs = isEnable
       break
 
+    case 'autosolat':
+    case 'autosholat':
+    case 'sholat':
+    case 'solat':
+      if (m.isGroup && !(isAdmin || isOwner)) return global.dfail('admin', m, conn)
+      chat.autosolat = isEnable
+      break
+
     case 'autolevelup':
-      isAll = true
-      if (!isROwner) return global.dfail('rowner', m, conn)
+    case 'autolevel':
+      if (m.isGroup && !(isAdmin || isOwner)) return global.dfail('admin', m, conn)
       chat.autolevelup = isEnable
       break
     case 'autocorrect':
-  isAll = true
-  if (!isROwner) return global.dfail('rowner', m, conn)
-  global.autocorrect = isEnable
-  break
+      isAll = true
+      if (!isROwner) return global.dfail('rowner', m, conn)
+      global.autocorrect = isEnable
+      botSettings.autocorrect = isEnable
+      break
 
     case 'public':
       isAll = true
@@ -149,6 +159,7 @@ let handler = async (m, { conn, usedPrefix, command, args, isOwner, isAdmin, isR
         chat.autosimi,
         chat.autodl,
         chat.rpgs,
+        chat.autosolat,
         !global.opts.self,
         global.opts.self,
         global.opts.autoread,
@@ -175,6 +186,8 @@ Settings Bot
 ❏ AutoSimi     : ${chat.autosimi ? '✅' : '❌'}
 ❏ AutoDL       : ${chat.autodl ? '✅' : '❌'}
 ❏ RPG          : ${chat.rpgs ? '✅' : '❌'}
+❏ AutoSholat   : ${chat.autosolat ? '✅' : '❌'}
+❏ AutoLevelUp  : ${chat.autolevelup ? '✅' : '❌'}
 
 [  OWNER  ]
 
@@ -183,7 +196,6 @@ Settings Bot
 ❏ AutoRead     : ${global.opts.autoread ? '✅' : '❌'}
 ❏ PC Only      : ${global.opts.pconly ? '✅' : '❌'}
 ❏ GC Only      : ${global.opts.gconly ? '✅' : '❌'}
-❏ AutoLevelUp  : ${chat.autolevelup ? '✅' : '❌'}
 ❏ AutoCorrect  : ${global.autocorrect ? '✅' : '❌'}
 
 Status : ${totalOn} fitur aktif

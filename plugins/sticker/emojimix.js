@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { sticker } from '../../lib/sticker.js'
+import { sticker } from '../../lib/core/sticker.js'
 
 let metadataCache = null
 let metadataExpiry = 0
@@ -55,8 +55,8 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   if (!text) {
     return m.reply(
       `— emoji mix —\n\n` +
-      `❀ usage : ${usedPrefix + command} <emoji1> <emoji2>\n` +
-      `❀ example : ${usedPrefix + command} 😂 ❤️`
+      `✿ usage : ${usedPrefix + command} <emoji1> <emoji2>\n` +
+      `✿ example : ${usedPrefix + command} 😂 ❤️`
     )
   }
 

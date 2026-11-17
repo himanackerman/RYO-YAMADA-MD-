@@ -1,9 +1,9 @@
 /*
-❀ fitur : payment 
-❀ cara pakai : .addpay nama payment trus reply foto atau url image contoh .addpay dana|085523568687, buat tampilkan payment comand nya .pay, buat liat list paymen .listpay , buat delete payment .delpay nama payment contoh .delpay dana 
-❀ note : sesuain sama SC kalian
-❀ creator : hilman
-❀ source : https://whatsapp.com/channel/0029VbAYjQgKrWQulDTYcg2K
+✿ fitur : payment 
+✿ cara pakai : .addpay nama payment trus reply foto atau url image contoh .addpay dana|085523568687, buat tampilkan payment comand nya .pay, buat liat list paymen .listpay , buat delete payment .delpay nama payment contoh .delpay dana 
+✿ note : sesuain sama SC kalian
+✿ creator : hilman
+✿ source : https://whatsapp.com/channel/0029VbAYjQgKrWQulDTYcg2K
 */
 
 import { existsSync, mkdirSync, writeFileSync } from 'fs'
@@ -74,9 +74,9 @@ const handler = async (m, { conn, text, command, usedPrefix }) => {
     const entries = Object.values(chat.payments)
     if (!entries.length) throw `Belum ada payment yang ditambahkan!\nGunakan: ${usedPrefix}addpay Nama|Nomor`
 
-    let teks = '❀ *LIST PAYMENT*\n\n'
-    teks += entries.map((v, i) => `${i + 1}. *${v.title}*\n    └ \`${v.number}\`${v.image ? ' ❀' : ''}`).join('\n')
-    teks += `\n\n❀ Total: ${entries.length}/10`
+    let teks = '✿ *LIST PAYMENT*\n\n'
+    teks += entries.map((v, i) => `${i + 1}. *${v.title}*\n    └ \`${v.number}\`${v.image ? ' ✿' : ''}`).join('\n')
+    teks += `\n\n✿ Total: ${entries.length}/10`
 
     return m.reply(teks)
   }
@@ -117,10 +117,10 @@ const handler = async (m, { conn, text, command, usedPrefix }) => {
           },
           interactiveMessage: proto.Message.InteractiveMessage.fromObject({
             body: proto.Message.InteractiveMessage.Body.create({
-              text: `*❀ PAYMENT INFO*\n\n${bodyText}\n\nTap tombol di bawah buat salin nomor.`
+              text: `*✿ PAYMENT INFO*\n\n${bodyText}\n\nTap tombol di bawah buat salin nomor.`
             }),
             footer: proto.Message.InteractiveMessage.Footer.create({
-              text: '❀ Payment'
+              text: '✿ Payment'
             }),
             header: proto.Message.InteractiveMessage.Header.fromObject({
               hasMediaAttachment: true,

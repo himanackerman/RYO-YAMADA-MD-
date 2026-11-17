@@ -1,5 +1,5 @@
 import { bratGen } from 'brat-canvas'
-import { sticker } from '../../lib/sticker.js'
+import { sticker } from '../../lib/core/sticker.js'
 
 let handler = async (m, { conn, text }) => {
   if (m.quoted && m.quoted.text) text = m.quoted.text || 'hai'

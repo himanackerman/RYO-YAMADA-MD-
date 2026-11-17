@@ -1,20 +1,15 @@
-import fetch from 'node-fetch'
+import { download } from '../../lib/scrape/savefrom.js'
 import { tiktokScrape } from '../../lib/scrape/tikwm.js'
 
-const SUPPORTED = /tiktok\.com|instagram\.com|facebook\.com|fb\.watch|twitter\.com|x\.com|threads\.net/i
+const SUPPORTED = /tiktok\.com|instagram\.com|facebook\.com|fb\.watch|twitter\.com|x\.com|threads\.net|youtube\.com|youtu\.be|dailymotion\.com|dai\.ly|vimeo\.com|reddit\.com|pin\.it|pinterest\.com/i
 
 let handler = {}
 
-function makeCaption({ author, duration, title }) {
-  return `
-❏ Auto Download
-
-❏ Author      : ${author || '-'}
-❏ Duration    : ${duration || '-'}
-❏ Title       : ${title || '-'}
-
-❏ Ryo Yamada MD
-`.trim()
+function makeCaption({ title, hosting, duration }) {
+  return `*\`Auto Download\`*\n\n` +
+    `✿ Title : ${title || '-'}\n` +
+    `✿ Hosting : ${hosting || '-'}\n` +
+    `✿ Duration : ${duration || '-'}`
 }
 
 handler.before = async (m, { conn }) => {
@@ -38,7 +33,6 @@ handler.before = async (m, { conn }) => {
   const url = text.match(/https?:\/\/[^\s]+/)?.[0]
   if (!url) return
 
-  if (/youtu\.?be|youtube\.com/i.test(url)) return
   if (!SUPPORTED.test(url)) return
 
   try {
@@ -47,10 +41,9 @@ handler.before = async (m, { conn }) => {
     if (/tiktok\.com/i.test(url)) {
       const tt = await tiktokScrape(url)
 
-      const caption = makeCaption({
-        author: tt.author,
-        title: tt.title
-      })
+      const caption = `*\`TikTok Auto Download\`*\n\n` +
+        `✿ Judul : ${tt.title || '-'}\n` +
+        `✿ Uploader : ${tt.author || '-'}`
 
       if (tt.type === 'video') {
         await conn.sendMessage(m.chat, {
@@ -84,49 +77,51 @@ handler.before = async (m, { conn }) => {
       return await m.react('✅')
     }
 
-    const res = await fetch(
-      `${global.APIs.nexray}/downloader/aio?url=${encodeURIComponent(url)}`
-    )
-    const json = await res.json()
+    const data = await download(url)
 
-    if (!json.status) throw new Error(json.message || 'Gagal mengambil media.')
+    if (!data.url || !data.url.length) {
+      throw new Error('Media tidak ditemukan.')
+    }
 
-    const data = json.result
-
-    const media =
-      data.medias.find(v => v.type === 'video' && v.quality === 'hd_no_watermark') ||
-      data.medias.find(v => v.type === 'video') ||
-      data.medias.find(v => v.type === 'audio')
-
-    if (!media) throw 'Media tidak ditemukan.'
+    const title = data.meta?.title || data.id || 'Media'
+    const duration = data.meta?.duration ? `${data.meta.duration} Detik` : '-'
+    const hosting = data.hosting || '-'
 
     const caption = makeCaption({
-      author: data.author,
-      duration: Math.floor((data.duration || 0) / 1000) + ' Detik',
-      title: data.title
+      title,
+      hosting,
+      duration
     })
 
-    if (media.type === 'audio') {
+    const chosenMedia = data.url.find(v => v.type === 'mp4' || v.ext === 'mp4' || v.url?.includes('.mp4')) ||
+      data.url.find(v => v.url) ||
+      data.url[0]
+
+    const mediaUrl = chosenMedia.url
+    if (!mediaUrl) throw new Error('URL media tidak ditemukan.')
+
+    const isAudio = chosenMedia.type === 'audio' || chosenMedia.ext === 'mp3' || chosenMedia.audio
+
+    if (isAudio) {
       await conn.sendMessage(m.chat, {
-        audio: { url: media.url },
+        audio: { url: mediaUrl },
         mimetype: 'audio/mpeg',
-        fileName: `${data.title || 'audio'}.mp3`,
+        fileName: `${title}.mp3`,
         ptt: false
       }, { quoted: m })
     } else {
-      const size = media.data_size || 0
-      const isLarge = size > 50 * 1024 * 1024
+      const isFileDoc = (chosenMedia.filesize && chosenMedia.filesize > 50 * 1024 * 1024)
 
-      if (isLarge) {
+      if (isFileDoc) {
         await conn.sendMessage(m.chat, {
-          document: { url: media.url },
-          fileName: `${data.title || 'video'}.mp4`,
+          document: { url: mediaUrl },
+          fileName: `${title}.mp4`,
           mimetype: 'video/mp4',
           caption
         }, { quoted: m })
       } else {
         await conn.sendMessage(m.chat, {
-          video: { url: media.url },
+          video: { url: mediaUrl },
           caption
         }, { quoted: m })
       }

@@ -20,7 +20,7 @@ ${usedPrefix + command} openai.com`)
 
     const r = data.result
 
-    const caption = `   *Track IP*
+    const caption = `*\`Track IP\`*
 
 ✿ IP : ${r.ip}
 ✿ Country : ${r.country} (${r.country_code})

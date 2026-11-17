@@ -24,10 +24,12 @@ let handler = async (m, { conn, text, command }) => {
 
     const { metadata, download } = await sfileDownload(text, true)
 
-    const caption = `📄 Nama: ${metadata.filename}
-📦 Tipe: ${metadata.mimetype}
-⬇️ Download: ${metadata.download_count}
-👤 Author: ${metadata.author_name}`
+    const caption = `*\`SFile Downloader\`*
+
+✿ Nama : ${metadata.filename}
+✿ Tipe : ${metadata.mimetype}
+✿ Download : ${metadata.download_count}
+✿ Author : ${metadata.author_name}`
 
     await conn.sendFile(m.chat, download, metadata.filename, caption, m)
   }

@@ -32,11 +32,11 @@ let handler = async (m, { conn }) => {
 
       const size = (archive.pointer() / 1024 / 1024).toFixed(2)
 
-      const caption = `✨ Backup Code Bot
+      const caption = `*\`Backup Code Bot\`*
 
-📁 File: ${backupName}
-📦 Size: ${size} MB
-📅 ${date}`
+✿ File : ${backupName}
+✿ Size : ${size} MB
+✿ Date : ${date}`
 
       await conn.sendFile(targetChat, backupName, backupName, caption)
 
@@ -64,6 +64,10 @@ let handler = async (m, { conn }) => {
         '.npm/**',
         'assets/**',
         'tmp/**/*',
+        'backup_update/**',
+        'backup_update',
+        'RYO-YAMADA-MD--main/**',
+        'RYO-YAMADA-MD--main',
         backupName
       ]
     })

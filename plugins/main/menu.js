@@ -113,7 +113,7 @@ let handler = async (m, { conn, usedPrefix, command, text, isOwner }) => {
 
       if (!menuType || (!categories[menuType] && menuType !== 'all')) {
 
-        const body = `
+        const bodyText = `
 ${toSmallCaps('hai, aku')} *${toSmallCaps(botname)}*,
 ${toSmallCaps('siap bantu kamu hari ini — pilih menu yang kamu butuhin ya.')}
 
@@ -133,48 +133,55 @@ ${global.dmenub2 || '┊'} Ⓐ = ${toSmallCaps('admin')}
 ${global.dmenuf || '┗––––––––––✦'}
 `.trim()
 
-        const rowList = [
-          {
-            header: '',
-            title: '❏ All Menu',
-            description: 'Tampilkan semua menu',
-            id: `${usedPrefix}${command} all`
-          },
-          ...arrayMenu.map(v => ({
-            header: '',
-            title: `${global.pmenus || '📌'} ${formatTag(v)}`,
-            description: `Lihat menu ${formatTag(v)}`,
-            id: `${usedPrefix}${command} ${v}`
-          }))
-        ]
+        const btn = new Button(conn)
+          .setBody(bodyText)
+          .setImage(mainBuffer)
+          .setFooter('ʀyᴏ yᴀᴍᴀᴅᴀ - ᴍᴅ')
+          .addSelection('Pilih Kategori', { icon: 'DEFAULT' })
+          .makeSection('Semua Kategori')
 
-        const sections = [{
-          title: `✨ Semua Kategori (${arrayMenu.length + 1})`,
-          highlight_label: '',
-          rows: rowList
-        }]
+        btn.makeRow(
+          '',
+          'All Menu',
+          'Tampilkan semua menu',
+          `${usedPrefix}${command} all`
+        )
 
-        await new ButtonV2(conn)
-          .setTitle(`${botname}`)
-          .setSubtitle('Menu Utama')
-          .setBody(body)
-          .setFooter('ʀyᴏ ʏᴀᴍᴀᴅᴀ - ᴍᴅ')
-          .setThumbnail(mainBuffer)
-          .addRawButton({
-            buttonText: { displayText: '❏ List Menu' },
-            buttonId: `${usedPrefix}${command}`,
-            type: 1,
-            nativeFlowInfo: {
-              name: 'single_select',
-              paramsJson: JSON.stringify({
-                title: 'Pilih Kategori Menu',
-                sections
-              })
+        arrayMenu.forEach(v => {
+          const titleTag = formatTag(v)
+          btn.makeRow(
+            '',
+            titleTag,
+            `Menu kategori ${titleTag}`,
+            `${usedPrefix}${command} ${v}`
+          )
+        })
+
+        btn
+          .addReply('All Menu', `${usedPrefix}${command} all`, { icon: 'REVIEW' })
+          .addReply('Owner', `${usedPrefix}owner`, { icon: 'DEFAULT' })
+          .addUrl(
+            'Channel',
+            'https://whatsapp.com/channel/0029VbAYjQgKrWQulDTYcg2K',
+            true,
+            { icon: 'PROMOTION' }
+          )
+          .setParams({
+            limited_time_offer: {
+              text: `${botname}!`,
+              url: 'https://github.com/himanackerman',
+              copy_code: botname.toLowerCase(),
+              expiration_time: Date.now() + 3600000
+            },
+            bottom_sheet: {
+              in_thread_buttons_limit: 1,
+              divider_indices: [0, 1, 2],
+              list_title: 'List Menu',
+              button_title: 'Pilih Menu'
             }
           })
-          .addButton('❏ Owner', `${usedPrefix}owner`)
-          .send(m.chat)
 
+        await btn.send(m.chat, { quoted: m })
         await playSound()
         await m.react('✅')
         return
@@ -244,7 +251,7 @@ ${toSmallCaps('ketik salah satu menu di atas')}
 
       if (!menuType || (!categories[menuType] && menuType !== 'all')) {
 
-        const bodyText = `
+        const body = `
 ${toSmallCaps('hai, aku')} *${toSmallCaps(botname)}*,
 ${toSmallCaps('siap bantu kamu hari ini — pilih menu yang kamu butuhin ya.')}
 
@@ -264,49 +271,48 @@ ${global.dmenub2 || '┊'} Ⓐ = ${toSmallCaps('admin')}
 ${global.dmenuf || '┗––––––––––✦'}
 `.trim()
 
-        const btn = new Button(conn)
-          .setBody(bodyText)
-          .setImage(mainBuffer)
-          .setFooter('ʀyᴏ yᴀᴍᴀᴅᴀ ᴍᴜʟᴛɪ ᴅᴇᴠɪᴄᴇ')
-          .addSelection('Pilih Kategori', { icon: 'DEFAULT' })
-          .makeSection('Semua Kategori')
+        const rowList = [
+          {
+            header: '',
+            title: '❏ All Menu',
+            description: 'Tampilkan semua menu',
+            id: `${usedPrefix}${command} all`
+          },
+          ...arrayMenu.map(v => ({
+            header: '',
+            title: `${global.pmenus || '📌'} ${formatTag(v)}`,
+            description: `Lihat menu ${formatTag(v)}`,
+            id: `${usedPrefix}${command} ${v}`
+          }))
+        ]
 
-        btn.makeRow(
-          '',
-          'All Menu',
-          'Tampilkan semua menu',
-          `${usedPrefix}${command} all`
-        )
+        const sections = [{
+          title: `✨ Semua Kategori (${arrayMenu.length + 1})`,
+          highlight_label: '',
+          rows: rowList
+        }]
 
-        arrayMenu.forEach(v => {
-          const titleTag = formatTag(v)
-          btn.makeRow(
-            '',
-            titleTag,
-            `Menu kategori ${titleTag}`,
-            `${usedPrefix}${command} ${v}`
-          )
-        })
-
-        btn
-          .addReply('All Menu', `${usedPrefix}${command} all`, { icon: 'REVIEW' })
-          .addReply('Owner', `${usedPrefix}owner`, { icon: 'DEFAULT' })
-          .setParams({
-            limited_time_offer: {
-              text: `${botname}!`,
-              url: 'https://github.com/himanackerman',
-              copy_code: botname.toLowerCase(),
-              expiration_time: Date.now() + 3600000
-            },
-            bottom_sheet: {
-              in_thread_buttons_limit: 1,
-              divider_indices: [0, 1, 2],
-              list_title: 'List Menu',
-              button_title: 'Pilih Menu'
+        await new ButtonV2(conn)
+          .setTitle(`${botname}`)
+          .setSubtitle('Menu Utama')
+          .setBody(body)
+          .setFooter('ʀyᴏ yᴀᴍᴀᴅᴀ - ᴍᴅ')
+          .setThumbnail(mainBuffer)
+          .addRawButton({
+            buttonText: { displayText: '❏ List Menu' },
+            buttonId: `${usedPrefix}${command}`,
+            type: 1,
+            nativeFlowInfo: {
+              name: 'single_select',
+              paramsJson: JSON.stringify({
+                title: 'Pilih Kategori Menu',
+                sections
+              })
             }
           })
+          .addButton('❏ Owner', `${usedPrefix}owner`)
+          .send(m.chat)
 
-        await btn.send(m.chat, { quoted: m })
         await playSound()
         await m.react('✅')
         return

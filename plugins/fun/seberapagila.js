@@ -17,7 +17,7 @@ let handler = async (m, { text }) => {
 
   const kata = komentar[Math.floor(Math.random() * komentar.length)]
 
-  m.reply(`🧠 *Tes Kegilaan Hari Ini*\n\n👤 Nama: *${nama}*\n📊 Tingkat Gila: *${persen}%*\n🗯️ Komentar: *${kata}*`)
+  m.reply(`*\`Tes Kegilaan Hari Ini\`*\n\n✿ Nama : ${nama}\n✿ Tingkat Gila : ${persen}%\n✿ Komentar : ${kata}`)
 }
 
 handler.help = ['seberapagila <nama opsional>']

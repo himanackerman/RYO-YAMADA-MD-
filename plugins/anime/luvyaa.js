@@ -172,7 +172,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
   if (!manga || !manga.chapters.length) throw 'Komik tidak ditemukan'
 
-  const caption = `❀ ${manga.title}\n` +
+  const caption = `✿ ${manga.title}\n` +
     `Status: ${manga.status}\n` +
     `Type: ${manga.type}\n` +
     `Author: ${manga.author}\n` +
@@ -186,14 +186,14 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
   if (manga.cover) btn.setImage(manga.cover)
 
-  btn.addSelection('❀ Pilih Chapter')
+  btn.addSelection('✿ Pilih Chapter')
   btn.makeSection('Daftar Chapter')
 
   manga.chapters.slice(0, 40).forEach(ch => {
     btn.makeRow(
       '📖',
       `Chapter ${ch.number}`,
-      ch.date ? `❀ ${ch.date}` : 'Tap untuk download PDF',
+      ch.date ? `✿ ${ch.date}` : 'Tap untuk download PDF',
       `${usedPrefix + command} baca|${ch.url}`
     )
   })

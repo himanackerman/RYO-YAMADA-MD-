@@ -26,10 +26,10 @@ let handler = async (m, { conn, text, args, usedPrefix, command }) => {
     let caption = `
 — instagram downloader —
 
-❀ author : ${cleanText(res.username)}
-❀ likes  : ${res.likes?.toLocaleString() || 0}
+✿ author : ${cleanText(res.username)}
+✿ likes : ${res.likes?.toLocaleString() || 0}
 
-❀ title :
+✿ title :
 ${cleanText(res.title || '-')}
 `.trim()
 

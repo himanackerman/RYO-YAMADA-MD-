@@ -14,7 +14,7 @@ import { createCanvas } from '@napi-rs/canvas';
 import { exec } from 'child_process';
 import fs from 'fs';
 import path from 'path';
-import { addExif } from '../../lib/sticker.js';
+import { addExif } from '../../lib/core/sticker.js';
 
 async function create_frame(text, color, pathna) {
   const width = 400;
@@ -171,7 +171,7 @@ let handler = async (m, { conn, text, command }) => {
       return m.reply('Perintah tidak valid.');
     }
 
-    // Menambahkan Watermark / Exif via lib/sticker.js
+    // Menambahkan Watermark / Exif via lib/core/sticker.js
     const stickerBuffer = await addExif(rawBuffer, 'ʀyᴏ yᴀᴍᴀᴅᴀ - ᴍᴅ', 'ʙy ʜɪʟᴍᴀɴ');
 
     await conn.sendMessage(m.chat, { sticker: stickerBuffer }, { quoted: m });

@@ -1,16 +1,21 @@
-import { tiktokScrape } from '../../lib/scrape/tikwm.js'
 import axios from 'axios'
+import { tikdown } from '../../lib/scrape/tikdown.js'
 
 async function sendCustomMessage(client, jid, content, options = {}) {
   const isMedia = content.video || content.image
 
   const customContent = {
     ...content,
-    mentions: content.mentions || client.parseMention?.(content?.text || content?.caption || '') || []
+    mentions: content.mentions ||
+      client.parseMention?.(content?.text || content?.caption || '') || []
   }
 
   if (isMedia) {
-    customContent.streamingSidecar = Buffer.from('Omw4hLediba3yg==', 'base64')
+    customContent.streamingSidecar = Buffer.from(
+      'Omw4hLediba3yg==',
+      'base64'
+    )
+
     customContent.annotations = [
       {
         polygonVertices: [
@@ -22,12 +27,12 @@ async function sendCustomMessage(client, jid, content, options = {}) {
         shouldSkipConfirmation: true,
         embeddedContent: {
           embeddedMusic: {
-            musicContentMediaId: "1409620227516822",
-            songId: "244215252974958",
-            author: global.author || "ᴇʟᴀɪɴᴀ ᴍᴜʟᴛɪ ᴅᴇᴠɪᴄᴇ",
-            title: global.namebot || "ᴇʟᴀɪɴᴀ ᴍᴜʟᴛɪ ᴅᴇᴠɪᴄᴇ",
-            artistAttribution: "https://whatsapp.com/channel/0029VbAYjQgKrWQulDTYcg2K",
-            countryBlocklist: "",
+            musicContentMediaId: '1409620227516822',
+            songId: '244215252974958',
+            author: global.author || 'ᴇʟᴀɪɴᴀ ᴍᴜʟᴛɪ ᴅᴇᴠɪᴄᴇ',
+            title: global.namebot || 'ᴇʟᴀɪɴᴀ ᴍᴜʟᴛɪ ᴅᴇᴠɪᴄᴇ',
+            artistAttribution: 'https://whatsapp.com/channel/0029VbAYjQgKrWQulDTYcg2K',
+            countryBlocklist: '',
             isExplicit: false
           }
         },
@@ -36,18 +41,21 @@ async function sendCustomMessage(client, jid, content, options = {}) {
     ]
   }
 
-  return await client.sendMessage(jid, customContent, options)
+  return client.sendMessage(jid, customContent, options)
 }
 
 async function searchTikTokNexray(query) {
-  const { data } = await axios.get('https://api.nexray.eu.cc/search/tiktok', {
-    params: { q: query },
-    headers: { 'user-agent': 'Mozilla/5.0' }
-  })
+  const { data } = await axios.get(
+    'https://api.nexray.eu.cc/search/tiktok',
+    {
+      params: { q: query },
+      headers: { 'User-Agent': 'Mozilla/5.0' },
+      timeout: 30000
+    }
+  )
 
-  if (!data?.status || !Array.isArray(data.result) || data.result.length === 0) {
+  if (!data?.status || !Array.isArray(data.result) || !data.result.length)
     return null
-  }
 
   const item = data.result.find(v => v?.id || v?.data)
   if (!item) return null
@@ -58,7 +66,7 @@ async function searchTikTokNexray(query) {
       type: 'video',
       title: item.title || '-',
       author: item.author?.nickname || item.author?.fullname || '-',
-      video: item.data,
+      videoUrl: item.data,
       images: [],
       audio: item.music_info?.url || null
     } : null
@@ -66,13 +74,11 @@ async function searchTikTokNexray(query) {
 }
 
 let handler = async (m, { conn, text, usedPrefix, command }) => {
-  const client = typeof conn !== 'undefined' ? conn : sock
-  await m.react('✨')
+  const input = (m.quoted?.text || text || '').trim()
 
-  const input = m.quoted ? m.quoted.text : text
   if (!input) {
     return m.reply(
-      `Contoh:\n` +
+      `Contoh penggunaan:\n\n` +
       `${usedPrefix + command} https://vt.tiktok.com/xxxx\n` +
       `${usedPrefix + command} ryo yamada edit`
     )
@@ -80,35 +86,39 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
   try {
     let res = null
-    const isUrl = /^https?:\/\//i.test(input.trim())
+    const isUrl = /^https?:\/\//i.test(input)
 
     if (!isUrl) {
-      const searchRes = await searchTikTokNexray(input.trim())
-      if (!searchRes) throw 'Hasil pencarian tidak ditemukan'
+      const searchRes = await searchTikTokNexray(input)
 
-      if (searchRes.directData) {
-        res = searchRes.directData
-      } else {
-        res = await tiktokScrape(searchRes.url)
-      }
+      if (!searchRes)
+        throw new Error('Hasil pencarian tidak ditemukan')
+
+      res = searchRes.directData || await tikdown(searchRes.url)
     } else {
-      res = await tiktokScrape(input.trim())
+      if (!/tiktok\.com\//i.test(input))
+        throw new Error('URL TikTok tidak valid')
+
+      res = await tikdown(input)
     }
 
-    if (!res) throw 'Gagal mengambil data TikTok'
+    if (!res)
+      throw new Error('Gagal mengambil data TikTok')
 
     const title = (res.title || '-').replace(/\s+/g, ' ').trim()
     const uploader = res.author || '-'
 
-    const caption = `*\`TikTok Downloader\`*
+    const caption =
+      `*\`TikTok Downloader\`*\n\n` +
+      `✿ Judul : ${title}\n` +
+      `✿ Uploader : ${uploader}`
 
-✿ *\`Judul\`* : ${title}
-✿ *\`Uploader\`* : ${uploader}`
+    const isImage = res.type === 'image' || (Array.isArray(res.images) && res.images.length > 0)
 
-    if (res.type === 'image' && res.images.length > 0) {
+    if (isImage) {
       if (res.images.length === 1) {
         await sendCustomMessage(
-          client,
+          conn,
           m.chat,
           {
             image: { url: res.images[0] },
@@ -123,20 +133,30 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
         }))
 
         try {
-          await client.sendAlbum(m.chat, albumMedias, { quoted: m, delay: 500 })
-        } catch (e) {
-          console.error('sendAlbum gagal, kirim foto pertama:', e)
-          await sendCustomMessage(
-            client,
+          await conn.sendAlbum(
             m.chat,
-            { image: { url: res.images[0] }, caption },
-            { quoted: m }
+            albumMedias,
+            { quoted: m, delay: 500 }
           )
+        } catch (e) {
+          console.error('[TIKTOK ALBUM ERROR]', e)
+
+          for (let i = 0; i < res.images.length; i++) {
+            await sendCustomMessage(
+              conn,
+              m.chat,
+              {
+                image: { url: res.images[i] },
+                ...(i === 0 ? { caption } : {})
+              },
+              { quoted: m }
+            )
+          }
         }
       }
 
       if (res.audio) {
-        await client.sendMessage(
+        await conn.sendMessage(
           m.chat,
           {
             audio: { url: res.audio },
@@ -146,24 +166,27 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
         )
       }
 
-      await m.react('✅')
       return
     }
 
-    if (res.video) {
+    const videoTarget = res.videoUrl || (typeof res.video === 'string' ? res.video : res.video?.fhd || res.video?.hd || res.video?.sd || res.video?.default)
+
+    if (videoTarget) {
       await sendCustomMessage(
-        client,
+        conn,
         m.chat,
         {
-          video: { url: res.video },
+          video: { url: videoTarget },
           caption
         },
         { quoted: m }
       )
+    } else {
+      throw new Error('Video tidak ditemukan')
     }
 
     if (res.audio) {
-      await client.sendMessage(
+      await conn.sendMessage(
         m.chat,
         {
           audio: { url: res.audio },
@@ -173,10 +196,9 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
       )
     }
 
-    await m.react('✅')
   } catch (e) {
-    await m.react('❌')
-    throw String(e)
+    console.error('[TIKTOK DOWNLOADER ERROR]', e)
+    return m.reply(`Gagal memproses TikTok:\n${e.message || e}`)
   }
 }
 

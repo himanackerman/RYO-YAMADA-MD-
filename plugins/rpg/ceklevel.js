@@ -1,4 +1,4 @@
-import { xpRange } from '../../lib/levelling.js'
+import { xpRange } from '../../lib/core/levelling.js'
 
 let handler = async (m, { conn }) => {
   let user = global.db.data.users[m.sender]

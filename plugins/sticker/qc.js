@@ -2,7 +2,7 @@ import { createCanvas, loadImage, GlobalFonts } from '@napi-rs/canvas'
 import path from 'path'
 import fs from 'fs'
 import axios from 'axios'
-import { sticker } from '../../lib/sticker.js'
+import { sticker } from '../../lib/core/sticker.js'
 
 const FONT_NAME_PATH = path.join(process.cwd(), 'src', 'font', 'Roboto-Bold.ttf')
 const FONT_TEXT_PATH = path.join(process.cwd(), 'src', 'font', 'Roboto-Medium.ttf')

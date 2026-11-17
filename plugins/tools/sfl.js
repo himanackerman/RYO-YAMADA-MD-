@@ -27,9 +27,9 @@ let handler = async (m, { text, usedPrefix, command }) => {
 
 		await m.reply(`*\`Safelink Bypass\`*
 
-✿ *\`Original URL\`* : ${d.originalUrl}
+✿ Original URL : ${d.originalUrl}
 
-✿ *\`Destination URL\`* :
+✿ Destination URL :
 ${d.destinationUrl}`)
 	} catch (e) {
 		m.reply(`❌ Error: ${e.message}`)

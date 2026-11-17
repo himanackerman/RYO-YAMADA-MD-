@@ -5,7 +5,7 @@
 
 import { createCanvas, loadImage } from "@napi-rs/canvas"
 import fetch from "node-fetch"
-import { sticker } from "../../lib/sticker.js"
+import { sticker } from "../../lib/core/sticker.js"
 
 let handler = async (m, { text, conn, usedPrefix, command }) => {
   if (!text)

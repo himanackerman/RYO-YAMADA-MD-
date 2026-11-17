@@ -7,8 +7,7 @@ let handler = async (m, { conn }) => {
       .flatMap(v => v.help)
       .length
 
-    const text = `✿ Total Plugin : ${totalPlugin}
-✿ Total Fitur : ${totalFitur}`
+    const text = `*\`Total Fitur\`*\n\n✿ Total Plugin : ${totalPlugin}\n✿ Total Fitur : ${totalFitur}`
 
     await new Button(conn)
       .setTitle('Total Fitur')

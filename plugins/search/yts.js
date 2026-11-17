@@ -17,14 +17,15 @@ ${usedPrefix + command} dj 30 detik`
 
   if (!videos.length) throw 'Video tidak ditemukan.'
 
-  let caption = `✨ *YouTube Search*\n`
+  let caption = `*\`YouTube Search\`*\n`
   caption += `Query: ${text}\n\n`
 
   for (let i = 0; i < videos.length; i++) {
     let v = videos[i]
-    caption += `*${i + 1}. ${v.title}*\n`
-    caption += `⏱ ${v.timestamp} | 🍓 ${v.views.toLocaleString()}\n`
-    caption += `📎 ${v.url}\n\n`
+    caption += `${i + 1}. *${v.title}*\n`
+    caption += `✿ Duration : ${v.timestamp}\n`
+    caption += `✿ Views : ${v.views.toLocaleString()}\n`
+    caption += `✿ Link : ${v.url}\n\n`
   }
 
   const { prepareWAMessageMedia } = await import('baileys')

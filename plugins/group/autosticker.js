@@ -1,4 +1,4 @@
-import { sticker, addExif } from '../../lib/sticker.js'
+import { sticker, addExif } from '../../lib/core/sticker.js'
 
 let handler = async (m, { conn, args, usedPrefix, command, isAdmin }) => {
     if (!m.isGroup) return m.reply('Hanya bisa di grup!')

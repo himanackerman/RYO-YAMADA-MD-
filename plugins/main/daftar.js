@@ -42,14 +42,14 @@ let handler = async (m, { text, usedPrefix, command, conn }) => {
 
   const caption = `*\`Pendaftaran Berhasil\`*
 
-✿ *\`Nama\`* : ${name}
-✿ *\`Umur\`* : ${age}
-✿ *\`SN\`* : ${sn}
+✿ Nama : ${name}
+✿ Umur : ${age}
+✿ SN : ${sn}
 
-✿ *\`Tanggal\`* : ${week}, ${date}
-✿ *\`Waktu\`* : ${time}
+✿ Tanggal : ${week}, ${date}
+✿ Waktu : ${time}
 
-✿ *\`Status\`* : Data berhasil disimpan`
+✿ Status : Data berhasil disimpan`
 
   const thumbnail = fs.readFileSync('./media/ryo1.jpg')
 
@@ -61,7 +61,6 @@ let handler = async (m, { text, usedPrefix, command, conn }) => {
   if (thumbnail) btn.setImage(thumbnail)
 
   btn.addReply(' Menu Utama', `${usedPrefix}menu`)
-  btn.addCopy(' Copy SN', sn)
 
   await btn.send(m.chat, { quoted: m })
   await m.react('✅')

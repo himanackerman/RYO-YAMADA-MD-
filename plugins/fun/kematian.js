@@ -24,7 +24,7 @@ let handler = async (m, { text }) => {
   let tanggal = getRandomDate()
   let penyebab = sebab[Math.floor(Math.random() * sebab.length)]
 
-  m.reply(`💀 *Ramalan Kematian*\n\n📛 Nama: *${nama}*\n🗓️ Tanggal: *${tanggal}*\n⚰️ Penyebab: *${penyebab}*`)
+  m.reply(`*\`Ramalan Kematian\`*\n\n✿ Nama : ${nama}\n✿ Tanggal : ${tanggal}\n✿ Penyebab : ${penyebab}`)
 }
 
 handler.help = ['kematian <nama opsional>']

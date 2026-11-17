@@ -148,25 +148,25 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
     let caption = `— *ROBLOX USER STALK* —
 
-❀ *username* : ${account.username}
-❀ *display name* : ${account.displayName}
-❀ *created* : ${account.created}
-❀ *description* : ${account.description}
-❀ *verified* : ${account.hasVerifiedBadge ? 'Ya' : 'Tidak'}
-❀ *banned* : ${account.isBanned ? 'Ya' : 'Tidak'}
+✿ username : ${account.username}
+✿ display name : ${account.displayName}
+✿ created : ${account.created}
+✿ description : ${account.description}
+✿ verified : ${account.hasVerifiedBadge ? 'Ya' : 'Tidak'}
+✿ banned : ${account.isBanned ? 'Ya' : 'Tidak'}
 
-❀ *presence* :
+✿ presence :
 - online : ${presence.isOnline ? 'Ya' : 'Tidak'}
 - last online : ${presence.lastOnline}
 - location : ${presence.location}
 
-❀ *stats* :
+✿ stats :
 - friends : ${stats.friendCount}
 - followers : ${stats.followers}
 - following : ${stats.following}\n\n`
 
     if (badges.length) {
-      caption += `❀ *recent badges* :\n`
+      caption += `✿ recent badges :\n`
       badges.forEach((b, i) => {
         caption += `${i + 1}. ${b.name}\n`
       })

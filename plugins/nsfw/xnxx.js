@@ -252,7 +252,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   if (searchResult.results.length === 0) throw 'Video tidak ditemukan'
 
   const hasil = searchResult.results
-  const caption = `❀ Hasil pencarian: ${text}\nTotal: ${hasil.length} video`
+  const caption = `✿ Hasil pencarian: ${text}\nTotal: ${hasil.length} video`
 
   const btn = new Button(conn)
     .setBody(caption)
@@ -267,7 +267,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     } catch {}
   }
 
-  btn.addSelection('❀ Pilih Video')
+  btn.addSelection('✿ Pilih Video')
   btn.makeSection('Daftar Video')
 
   hasil.forEach(v => {

@@ -41,14 +41,14 @@ let handler = async (m, { conn }) => {
   user.energy -= 10
 
   m.reply(`
-🏹 *BERBURU BERHASIL*
+*\`BERBURU BERHASIL\`*
 
 Kamu mendapatkan:
-${dapat[1]} : ${jumlah}
+✿ ${dapat[1]} : ${jumlah}
 
-💰 Money +${jumlah * 50}
-✨ Exp +${jumlah * 20}
-⚡ Energy -10
+✿ 💰 Money : +${jumlah * 50}
+✿ ✨ Exp : +${jumlah * 20}
+✿ ⚡ Energy : -10
 `.trim())
 }
 

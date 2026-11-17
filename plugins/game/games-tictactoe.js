@@ -1,4 +1,4 @@
-import TicTacToe from '../../lib/tictactoe.js'
+import TicTacToe from '../../lib/core/tictactoe.js'
 
 let handler = async (m, { conn, usedPrefix, command, text }) => {
     conn.game = conn.game ? conn.game : {};

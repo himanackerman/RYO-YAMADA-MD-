@@ -25,10 +25,12 @@ ${usedPrefix + command} lookism`)
             }
         })
 
-        const caption = `📚 *${w.title}*
-👤 Author: ${w.author}
-👁️ ${w.viewCount}
-🔗 ${w.link}`
+        const caption = `*\`Webtoon Search\`*
+
+✿ Title : ${w.title}
+✿ Author : ${w.author}
+✿ Views : ${w.viewCount}
+✿ Link : ${w.link}`
 
         await conn.sendFile(m.chat, img.data, 'webtoon.jpg', caption, m)
 

@@ -1,5 +1,5 @@
 import { createCanvas, loadImage, GlobalFonts } from '@napi-rs/canvas'
-import { xpRange } from '../../lib/levelling.js'
+import { xpRange } from '../../lib/core/levelling.js'
 import path from 'path'
 
 GlobalFonts.registerFromPath(path.join(process.cwd(), 'src/font/Futura Extra Black font.ttf'), 'NeoTitle')

@@ -35,16 +35,16 @@ let handler = async (m, { conn, text }) => {
 				},
 				caption: `*\`Sekolah ${i + 1}\`*
 
-✿ *\`Nama\`* : ${v.nama || "-"}
-✿ *\`NPSN\`* : ${v.npsn || "-"}
-✿ *\`Pendidikan\`* : ${v.bentuk_pendidikan || "-"}
-✿ *\`Status\`* : ${v.status_sekolah || "-"}
-✿ *\`Akreditasi\`* : ${v.akreditasi || "-"}
-✿ *\`Alamat\`* : ${v.alamat || "-"}
-✿ *\`Kecamatan\`* : ${v.kecamatan || "-"}
-✿ *\`Kabupaten\`* : ${v.kabupaten || "-"}
-✿ *\`Provinsi\`* : ${v.provinsi || "-"}
-✿ *\`Kode Pos\`* : ${v.kode_pos || "-"}`
+✿ Nama : ${v.nama || "-"}
+✿ NPSN : ${v.npsn || "-"}
+✿ Pendidikan : ${v.bentuk_pendidikan || "-"}
+✿ Status : ${v.status_sekolah || "-"}
+✿ Akreditasi : ${v.akreditasi || "-"}
+✿ Alamat : ${v.alamat || "-"}
+✿ Kecamatan : ${v.kecamatan || "-"}
+✿ Kabupaten : ${v.kabupaten || "-"}
+✿ Provinsi : ${v.provinsi || "-"}
+✿ Kode Pos : ${v.kode_pos || "-"}`
 			}))
 			.filter(v => v.image.url)
 			.slice(0, 10)
@@ -60,14 +60,14 @@ let handler = async (m, { conn, text }) => {
 				.slice(0, 10)
 				.map((v, i) => `*\`Sekolah ${i + 1}\`*
 
-✿ *\`Nama\`* : ${v.nama || "-"}
-✿ *\`NPSN\`* : ${v.npsn || "-"}
-✿ *\`Pendidikan\`* : ${v.bentuk_pendidikan || "-"}
-✿ *\`Status\`* : ${v.status_sekolah || "-"}
-✿ *\`Alamat\`* : ${v.alamat || "-"}
-✿ *\`Kecamatan\`* : ${v.kecamatan || "-"}
-✿ *\`Kabupaten\`* : ${v.kabupaten || "-"}
-✿ *\`Provinsi\`* : ${v.provinsi || "-"}`)
+✿ Nama : ${v.nama || "-"}
+✿ NPSN : ${v.npsn || "-"}
+✿ Pendidikan : ${v.bentuk_pendidikan || "-"}
+✿ Status : ${v.status_sekolah || "-"}
+✿ Alamat : ${v.alamat || "-"}
+✿ Kecamatan : ${v.kecamatan || "-"}
+✿ Kabupaten : ${v.kabupaten || "-"}
+✿ Provinsi : ${v.provinsi || "-"}`)
 				.join("\n\n")
 
 			await m.reply(result)

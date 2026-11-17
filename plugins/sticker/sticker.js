@@ -4,7 +4,7 @@
 * channel https://whatsapp.com/channel/0029VbAYjQgKrWQulDTYcg2K
 */
 
-import { sticker } from '../../lib/sticker.js'
+import { sticker } from '../../lib/core/sticker.js'
 import { downloadContentFromMessage } from 'baileys'
 import crypto from 'crypto'
 import https from 'https'
@@ -279,7 +279,7 @@ async function sendCustomStickerPack(conn, jid, pack, options = {}) {
         stickerPackId: 'Pack_' + crypto.randomBytes(8).toString('hex'),
         name: options.name || global.namebot || 'Sticker Pack',
         publisher: options.publisher || global.author || 'Bot',
-        packDescription: options.description || `❀ ${global.namebot || 'Bot'}`,
+        packDescription: options.description || `✿ ${global.namebot || 'Bot'}`,
 
         stickers: stickersMetadata,
 

@@ -40,7 +40,7 @@ ${usedPrefix + command} https://open.spotify.com/track/3M0lSi5WW79CXQamgSBIjx`)
     const s = await search.json()
     const info = s.result?.[0] || {}
 
-    const caption = `   *Spotify Downloader*
+    const caption = `*\`Spotify Downloader\`*
 
 ✿ Title : ${data.result.title}
 ✿ Artist : ${data.result.artist}

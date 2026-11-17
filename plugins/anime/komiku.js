@@ -95,7 +95,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
     const detail = data.result
 
-    const caption = `❀ ${detail.title}\n` +
+    const caption = `✿ ${detail.title}\n` +
       `Status: ${detail.info?.['status:'] || '-'}\n` +
       `Genre: ${(detail.genres || []).join(', ')}\n` +
       `Total Chapter: ${detail.chapters.length}`
@@ -106,14 +106,14 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
     if (detail.thumbnail) btn.setImage(detail.thumbnail)
 
-    btn.addSelection('❀ Pilih Chapter')
+    btn.addSelection('✿ Pilih Chapter')
     btn.makeSection('Daftar Chapter')
 
     detail.chapters.slice(0, 30).forEach(c => {
       btn.makeRow(
         '📖',
         c.title,
-        c.date ? `❀ ${c.date}` : 'Tap untuk download PDF',
+        c.date ? `✿ ${c.date}` : 'Tap untuk download PDF',
         `${usedPrefix + command} chapter|${c.link}`
       )
     })
@@ -129,7 +129,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
   if (!data?.status || !data?.result?.length) throw 'Komik tidak ditemukan'
 
   const hasil = data.result
-  const caption = `❀ Hasil pencarian: ${text}\nTotal: ${hasil.length} komik`
+  const caption = `✿ Hasil pencarian: ${text}\nTotal: ${hasil.length} komik`
 
   const btn = new Button(conn)
     .setBody(caption)
@@ -137,7 +137,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
   if (hasil[0]?.thumbnail) btn.setImage(hasil[0].thumbnail)
 
-  btn.addSelection('❀ Pilih Komik')
+  btn.addSelection('✿ Pilih Komik')
   btn.makeSection('Daftar Komik')
 
   hasil.slice(0, 20).forEach(v => {

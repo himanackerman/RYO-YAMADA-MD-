@@ -18,14 +18,14 @@ ${usedPrefix + command} cinta untuk starla`)
 
         const list = data.result.slice(0, 5)
 
-        let caption = `🍎 *Apple Music Search*\n\n`
+        let caption = `*\`Apple Music Search\`*\n\n`
 
         for (let i = 0; i < list.length; i++) {
             let v = list[i]
             caption += `${i + 1}. *${v.title}*\n`
-            caption += `👤 ${v.artist.name}\n`
-            caption += `🎵 ${v.song}\n`
-            caption += `🔗 ${v.artist.url}\n\n`
+            caption += `✿ Artist : ${v.artist.name}\n`
+            caption += `✿ Song : ${v.song}\n`
+            caption += `✿ Link : ${v.artist.url}\n\n`
         }
 
         m.reply(caption.trim())

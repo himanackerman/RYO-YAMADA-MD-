@@ -7,7 +7,7 @@
  **/
 
 import axios from 'axios'
-import { sticker } from '../../lib/sticker.js'
+import { sticker } from '../../lib/core/sticker.js'
 
 const colorMap = {
   putih: '#ffffff',

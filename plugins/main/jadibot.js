@@ -1,4 +1,4 @@
-import { startSubBot } from '../../lib/jadibot.js'
+import { startSubBot } from '../../lib/core/jadibot.js'
 
 let handler = async (m, { conn, args, usedPrefix, command }) => {
   const number = args[0]

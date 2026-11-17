@@ -16,7 +16,7 @@ let handler = async (m, { conn }) => {
   }
 
   const src = JSON.parse(
-    fs.readFileSync('./json/caklontong.json', 'utf-8')
+    fs.readFileSync('./lib/json/caklontong.json', 'utf-8')
   )
 
   const json = src[Math.floor(Math.random() * src.length)]
@@ -26,11 +26,11 @@ let handler = async (m, { conn }) => {
 
 ${json.soal}
 
-⏳ Timeout ${timeout / 1000} detik
-💡 Ketik *calo* untuk bantuan
-🏳️ Ketik *nyerah* untuk menyerah
-🎁 Bonus: ${poin} XP
-🎟️ Reward: +${bonusLimit} Limit
+✿ Timeout : ${timeout / 1000} detik
+✿ Bantuan : Ketik *calo*
+✿ Menyerah : Ketik *nyerah*
+✿ Bonus : ${poin} XP
+✿ Reward : +${bonusLimit} Limit
 `.trim()
 
   const msg = await m.reply(caption)

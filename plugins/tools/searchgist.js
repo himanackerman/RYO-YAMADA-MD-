@@ -24,7 +24,7 @@ let handler = async (m, { text, usedPrefix, command }) => {
 
     hasil = [...new Set(hasil)]
       .slice(0, 30)
-      .map((v, i) => `❀ ${i + 1}. ${v}`)
+      .map((v, i) => `✿ ${i + 1}. ${v}`)
       .join('\n\n')
 
     m.reply(hasil || 'Tidak ditemukan')

@@ -7,7 +7,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
   await m.react('🕒')
 
-  let url = `https://apiii-xrina.my.id/canvas/fakeffduo?name1=${encodeURIComponent(name1)}&name2=${encodeURIComponent(name2)}`
+  let url = `${global.APIs.xrina}/canvas/fakeffduo?name1=${encodeURIComponent(name1)}&name2=${encodeURIComponent(name2)}`
 
   let res = await fetch(url)
   if (!res.ok) throw `API Error: ${res.status}`

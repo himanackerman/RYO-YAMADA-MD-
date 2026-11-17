@@ -4,7 +4,7 @@ import path from 'path'
 import { tmpdir } from 'os'
 import { exec } from 'child_process'
 import util from 'util'
-import TTSQueue from '../../lib/tts-queue.js'
+import TTSQueue from '../../lib/scrape/tts-queue.js'
 
 const execAsync = util.promisify(exec)
 

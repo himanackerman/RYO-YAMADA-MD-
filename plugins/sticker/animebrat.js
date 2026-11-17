@@ -1,4 +1,4 @@
-import { sticker } from '../../lib/sticker.js'
+import { sticker } from '../../lib/core/sticker.js'
 
 const handler = async (m, { conn, text }) => {
   if (!text) return m.reply('Masukkan teks untuk stiker.')

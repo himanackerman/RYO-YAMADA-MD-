@@ -91,14 +91,14 @@ let handler = async (m, { text, usedPrefix, command }) => {
 
     if (!groups.length) return m.reply('❌ Tidak ada grup ditemukan.')
 
-    let teks = `📋 *Hasil Pencarian Grup WhatsApp:*\n\n`
+    let teks = `*\`Hasil Pencarian Grup\`*\n\n`
     groups.forEach((group, i) => {
-      teks += `*${i + 1}. 📌 Nama:* ${group.Name}\n`
-      teks += `🔗 *Link:* ${group.Link}\n`
-      teks += `📝 *Deskripsi:* ${group.Description}\n`
-      teks += `🔍 *Keyword:* ${group.Keyword}\n\n`
+      teks += `${i + 1}. *${group.Name}*\n`
+      teks += `✿ Link : ${group.Link}\n`
+      teks += `✿ Deskripsi : ${group.Description}\n`
+      teks += `✿ Keyword : ${group.Keyword}\n\n`
     })
-    teks += `✅ *Total Grup Ditemukan:* ${groups.length}`
+    teks += `✿ Total : ${groups.length} grup ditemukan`
 
     m.reply(teks)
 

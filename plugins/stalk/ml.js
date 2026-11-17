@@ -1,85 +1,137 @@
-import axios from "axios";
-import fs from "fs/promises";
+import fetch from 'node-fetch'
+import axios from 'axios'
 
-async function getToken(url) {
-  try {
-    const response = await axios.get(url);
-    const cookies = response.headers["set-cookie"];
-    const joinedCookies = cookies ? cookies.join("; ") : null;
-
-    const csrfTokenMatch = response.data.match(/<meta name="csrf-token" content="(.*?)">/);
-    const csrfToken = csrfTokenMatch ? csrfTokenMatch[1] : null;
-
-    if (!csrfToken || !joinedCookies) {
-      throw new Error("Gagal mendapatkan CSRF token atau cookie.");
-    }
-
-    return { csrfToken, joinedCookies };
-  } catch (error) {
-    console.error("❌ Error fetching cookies or CSRF token:", error.message);
-    throw error;
-  }
+const REGION_MAP = {
+  "1": "Indonesia", "2": "Indonesia", "3": "Indonesia", "4": "Indonesia",
+  "5": "Indonesia", "6": "Indonesia", "7": "Indonesia", "8": "Indonesia", "9": "Indonesia",
+  "10": "Malaysia / SG / BN", "11": "Philippines", "12": "Thailand",
+  "13": "Vietnam", "14": "Cambodia", "15": "Myanmar", "16": "Laos",
+  "17": "Timor-Leste", "19": "Middle East", "20": "North America",
+  "21": "Europe", "22": "South America"
 }
 
-async function mlStalk(userId, zoneId) {
+function getRegion(sid) {
+  const s = String(sid)
+  return REGION_MAP[s.slice(0, 2)] ?? REGION_MAP[s.slice(0, 1)] ?? "Unknown"
+}
+
+async function stalkML(userId, serverId) {
+  let status = "failed"
+  let code = 404
+  let username = null
+
+  // 1. Coba via api.isan.eu.org
   try {
-    const { csrfToken, joinedCookies } = await getToken("https://www.gempaytopup.com");
-
-    const payload = {
-      uid: userId,
-      zone: zoneId,
-    };
-
-    const { data } = await axios.post(
-      "https://www.gempaytopup.com/stalk-ml",
-      payload,
+    const res = await fetch(
+      `https://api.isan.eu.org/nickname/ml?id=${userId}&server=${serverId}`,
       {
-        headers: {
-          "X-CSRF-Token": csrfToken,
-          "Content-Type": "application/json",
-          Cookie: joinedCookies,
-        },
+        headers: { "User-Agent": "StalkML/1.0", "Accept": "application/json" },
+        timeout: 10000
       }
-    );
+    )
+    if (res.ok) {
+      const json = await res.json()
+      if (json && json.success && json.name) {
+        status = "success"
+        code = 200
+        username = json.name
+      }
+    }
+  } catch (e) {
+    // lanjut ke fallback
+  }
 
-    return data;
-  } catch (error) {
-    console.error("❌ Error:", error.message);
-    console.error("Response:", error.response?.data || "No response data");
+  // 2. Fallback via api.mobapay.com jika isan gagal
+  if (!username) {
+    try {
+      const { data } = await axios.get(
+        "https://api.mobapay.com/api/app_shop",
+        {
+          headers: {
+            "content-type": "application/json",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+          },
+          params: {
+            app_id: 100000,
+            game_user_key: userId,
+            game_server_key: serverId,
+            country: "ID",
+            language: "en",
+            shop_id: 1001
+          },
+          timeout: 15000
+        }
+      )
+      const userInfo = data?.data?.user_info
+      if (userInfo && userInfo.user_name && userInfo.user_name.trim()) {
+        status = "success"
+        code = 200
+        username = userInfo.user_name
+      }
+    } catch (e) {
+      // fallback error
+    }
+  }
+
+  return {
+    status,
+    code,
+    data: {
+      id: userId,
+      server: serverId,
+      username: username ?? "Not Found",
+      region: getRegion(serverId)
+    }
   }
 }
 
-// Handler untuk command
-const handler = async (m, { conn, text }) => {
-  const [userId, zoneId] = text.split(' '); // Mengambil userId dan zoneId dari query
-
-  if (!userId || !zoneId) {
-    return m.reply("Silakan masukkan userId dan zoneId. Contoh: .mlstalk 12345678 1234");
+const handler = async (m, { conn, text, usedPrefix, command }) => {
+  if (!text) {
+    return conn.reply(m.chat, `*\`Mobile Legends Stalker\`*\n\n✿ Info : Masukkan User ID dan Server ID\n✿ Format : ${usedPrefix + command} <userId> <serverId>\n✿ Contoh : *${usedPrefix + command} 84444577 2166*`, m)
   }
 
-  const result = await mlStalk(userId, zoneId);
-  
-  if (result) {
-    // Format hasil yang lebih rapi
-    const formattedResult = `
-Username: ${result.username || 'Tidak tersedia'}
-Region: ${result.region || 'Tidak tersedia'}
-Success: ${result.success ? 'Ya' : 'Tidak'}
-    `;
+  const parts = text.trim().split(/\s+/)
+  const userId = parts[0]
+  const serverId = parts[1]
 
-    // Ganti 'https://link.to/your/image.jpg' dengan URL gambar yang ingin Anda kirim
-    const imageUrl = 'https://www.pic.surf/2kk'; 
-
-    // Mengirim gambar dari URL dan hasil dalam satu pesan
-    await conn.sendFile(m.chat, imageUrl, 'image.jpg', `Hasil Stalk:\n${formattedResult}`, m);
-  } else {
-    m.reply("Gagal mendapatkan data.");
+  if (!userId || !serverId) {
+    return conn.reply(m.chat, `*\`Mobile Legends Stalker\`*\n\n✿ Info : Masukkan User ID dan Server ID\n✿ Format : ${usedPrefix + command} <userId> <serverId>\n✿ Contoh : *${usedPrefix + command} 84444577 2166*`, m)
   }
-};
 
-handler.help = ['mlstalk <userId> <zoneId>'];
-handler.tags = ["stalk"];
-handler.command = /^(mlstalk)$/i;
-handler.limit = false;
+  try {
+    await m.react('🔍')
 
-export default handler;
+    const result = await stalkML(userId, serverId)
+
+    if (result.code === 200) {
+      const caption = `*\`Mobile Legends Stalker\`*
+
+✿ Username : ${result.data.username}
+✿ User ID : ${result.data.id}
+✿ Server : ${result.data.server}
+✿ Region : ${result.data.region}
+✿ Status : Ditemukan`
+
+      await conn.reply(m.chat, caption, m)
+      await m.react('✅')
+    } else if (result.code === 404) {
+      await conn.reply(m.chat, `*\`Mobile Legends Stalker\`*\n\n✿ Status : Akun tidak ditemukan\n✿ Catatan : Pastikan User ID dan Server ID sudah benar.`, m)
+      await m.react('❌')
+    } else {
+      await conn.reply(m.chat, '❌ Terjadi kesalahan saat mengambil data.', m)
+      await m.react('❌')
+    }
+  } catch (error) {
+    console.error(error)
+    await conn.reply(m.chat, '❌ Terjadi kesalahan saat mengambil data Mobile Legends.', m)
+    await m.react('❌')
+  }
+}
+
+handler.help = ['stalkml <userId> <serverId>', 'mlstalk <userId> <serverId>']
+handler.tags = ['stalk']
+handler.command = /^(stalkml|mlstalk)$/i
+handler.limit = true
+handler.register = true
+
+export default handler

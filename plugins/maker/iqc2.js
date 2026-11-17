@@ -28,12 +28,12 @@ ${usedPrefix + command} Halo hilman|INDOSAT|15:55|55`)
     `&jam=${encodeURIComponent(jam)}` +
     `&baterai=${encodeURIComponent(baterai)}`
 
-  const caption = `— *IQC MAKER* —
+  const caption = `*\`IQC MAKER\`*
 
-❀ *Text* : ${teks}
-❀ *Provider* : ${provider}
-❀ *Time* : ${jam}
-❀ *Battery* : ${baterai}%`
+✿ Text : ${teks}
+✿ Provider : ${provider}
+✿ Time : ${jam}
+✿ Battery : ${baterai}%`
 
   await conn.sendMessage(
     m.chat,

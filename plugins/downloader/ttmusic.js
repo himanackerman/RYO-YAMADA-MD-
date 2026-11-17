@@ -67,11 +67,11 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     const duration = formatDuration(res.duration)
 
     const caption = `
-— TIKTOK MUSIC —
+*\`TikTok Music\`*
 
-❀ Judul : ${title.length > 80 ? title.slice(0, 80) + '...' : title}
-❀ Uploader : ${uploader}
-❀ Durasi : ${duration}
+✿ Judul : ${title.length > 80 ? title.slice(0, 80) + '...' : title}
+✿ Uploader : ${uploader}
+✿ Durasi : ${duration}
 `.trim()
 
     await conn.sendMessage(

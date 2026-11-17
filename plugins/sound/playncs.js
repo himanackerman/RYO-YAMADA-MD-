@@ -137,7 +137,7 @@ let handler = async (m, { conn, text, command }) => {
   }
 
   if (command === "ncssearch") {
-    if (!text) return m.reply("❀ Contoh: *.ncssearch Invincible*")
+    if (!text) return m.reply("✿ Contoh: *.ncssearch Invincible*")
 
     await m.reply("🍭 Sedang mencari lagu di NCS.io...")
     const results = await ncs.searchTracks(text)

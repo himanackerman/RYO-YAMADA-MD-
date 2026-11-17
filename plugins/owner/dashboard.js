@@ -10,8 +10,8 @@ let handler = async (m, { conn, usedPrefix }) => {
   let totalHits = sorted.reduce((acc, curr) => acc + curr[1], 0)
   let top10 = sorted.slice(0, 10)
 
-  let caption = `📊 DASHBOARD STATISTIK COMMAND\n`
-  caption += `📈 Total Penggunaan: ${totalHits} kali\n\n`
+  let caption = `*\`DASHBOARD STATISTIK COMMAND\`*\n`
+  caption += `✿ Total Penggunaan : ${totalHits} kali\n\n`
 
   top10.forEach(([cmd, count], index) => {
     let percentage = ((count / totalHits) * 100).toFixed(1)

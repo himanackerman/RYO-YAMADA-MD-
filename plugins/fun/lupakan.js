@@ -23,7 +23,7 @@ const handler = async (m, { conn, text, usedPrefix, command }) => {
   
   const message = `— lupakan masa lalu —
 
-❀ motivasi :
+✿ motivasi :
 ${randomQuote}
 
 Ingat, kamu lebih kuat dari yang kamu pikirkan. Masa depan penuh dengan kemungkinan tak terbatas! 💪✨`;

@@ -2,8 +2,8 @@ let handler = async (m, { conn }) => {
   try {
     const ryo = `*\`Ryo Yamada\`*
 
-✿ *\`Status\`* : Online.
-✿ *\`Info\`* : Ketik *.menu* untuk melihat semua fitur.
+✿ Status : Online.
+✿ Info : Ketik *.menu* untuk melihat semua fitur.
 
 Jangan ganggu aku lagi latihan bass...`
 

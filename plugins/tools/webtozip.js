@@ -20,7 +20,7 @@ ${usedPrefix + command} https://example.com`)
 
     const r = data.result
 
-    const caption = `   *Web To ZIP*
+    const caption = `*\`Web To ZIP\`*
 
 ✿ URL : ${r.url}
 ✿ Total File : ${r.copiedFilesAmount}

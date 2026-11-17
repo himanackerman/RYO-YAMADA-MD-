@@ -1,122 +1,113 @@
+import uguu from '../../lib/scrape/uguu.js'
+import { downloadContentFromMessage } from 'baileys'
 import axios from 'axios'
-import FormData from 'form-data'
 
-const handler = async (m, { conn, text, usedPrefix }) => {
-  const quotedImage =
-    m.quoted &&
-    /image/i.test(m.quoted.mtype || m.quoted.type || '')
+function getMediaContent(obj) {
+  if (!obj) return { mtype: '', content: {} }
 
-  const directImage =
-    m.mtype === 'imageMessage' ||
-    m.type === 'imageMessage' ||
-    m.message?.imageMessage
+  let mtype = obj.mtype || (obj.message ? Object.keys(obj.message)[0] : '')
+  let content = obj.message?.[mtype] || obj.msg || obj
 
-  if (!quotedImage && !directImage) {
-    throw `*FAKE LOBBY ML*
-
-Cara pakai:
-
-Reply gambar:
-*${usedPrefix}fakeml NamaKamu*
-
-Atau kirim gambar langsung dengan caption:
-*${usedPrefix}fakeml NamaKamu*
-
-Contoh:
-*${usedPrefix}fakeml mark*`
+  if (
+    ['viewOnceMessage', 'viewOnceMessageV2', 'viewOnceMessageV2Extension'].includes(mtype) &&
+    content?.message
+  ) {
+    const innerType = Object.keys(content.message)[0]
+    mtype = innerType
+    content = content.message[innerType] || {}
   }
 
+  return { mtype, content }
+}
+
+async function extractBuffer(item) {
+  if (!item) return null
+  let buffer = await item.download?.().catch(() => null)
+  if (!buffer) {
+    const { mtype, content } = getMediaContent(item)
+    const type = mtype ? mtype.replace('Message', '') : 'image'
+    try {
+      const stream = await downloadContentFromMessage(content, type)
+      buffer = Buffer.from([])
+      for await (const chunk of stream) {
+        buffer = Buffer.concat([buffer, chunk])
+      }
+    } catch {
+      buffer = null
+    }
+  }
+  return buffer
+}
+
+let handler = async (m, { conn, text, usedPrefix, command }) => {
   const nickname = text?.trim()
 
   if (!nickname) {
-    throw `Nickname tidak boleh kosong!
-
-Contoh:
-*${usedPrefix}fakeml mark*`
+    return m.reply(
+      `Contoh penggunaan:\n\n` +
+      `Kirim/reply foto dengan teks:\n` +
+      `*${usedPrefix + command} nickname*\n\n` +
+      `*Contoh:* ${usedPrefix + command} mark`
+    )
   }
 
+  let q = m.quoted ? m.quoted : m
+  let mime = (q.msg || q).mimetype || ''
+  let isMedia = /image\/(jpe?g|png)/.test(mime)
+
+  await m.react('🕒')
+
   try {
-    let imageBuffer
+    let avatarUrl = ''
 
-    if (quotedImage) {
-      imageBuffer = await m.quoted.download()
-    } else {
-      imageBuffer = await m.download()
-    }
-
-    if (!imageBuffer) {
-      throw new Error('Gagal mengambil gambar')
-    }
-
-    const form = new FormData()
-
-    form.append('files[]', imageBuffer, {
-      filename: 'avatar.jpg',
-      contentType: 'image/jpeg'
-    })
-
-    const { data } = await axios.post(
-      'https://uguu.se/upload.php',
-      form,
-      {
-        headers: {
-          ...form.getHeaders(),
-          'User-Agent': 'Mozilla/5.0'
-        },
-        timeout: 30000,
-        maxBodyLength: Infinity,
-        maxContentLength: Infinity
+    if (isMedia) {
+      let buffer = await extractBuffer(q)
+      if (buffer && buffer.length) {
+        let upload = await uguu(buffer, 'avatar.jpg', 'image/jpeg')
+        avatarUrl = upload.url
       }
-    )
-
-    const imageUrl = data?.files?.[0]?.url
-
-    if (!imageUrl) {
-      throw new Error('Gagal upload gambar ke Uguu')
     }
 
-    const url =
-      `https://api.nexray.eu.cc/maker/fakelobyml` +
-      `?avatar=${encodeURIComponent(imageUrl)}` +
-      `&nickname=${encodeURIComponent(nickname)}`
+    if (!avatarUrl) {
+      let pp = await conn.profilePictureUrl(m.quoted ? m.quoted.sender : m.sender, 'image').catch(() => null)
+      if (pp) {
+        let res = await axios.get(pp, { responseType: 'arraybuffer' })
+        let upload = await uguu(Buffer.from(res.data), 'avatar.jpg', 'image/jpeg')
+        avatarUrl = upload.url
+      }
+    }
 
-    const response = await axios.get(url, {
+    if (!avatarUrl) {
+      throw `Silakan kirim atau reply foto dengan format:\n*${usedPrefix + command} ${nickname}*`
+    }
+
+    let apiUrl = `${global.APIs.xrina}/canvas/fakeml?avatar=${encodeURIComponent(avatarUrl)}&username=${encodeURIComponent(nickname)}`
+
+    let response = await axios.get(apiUrl, {
       responseType: 'arraybuffer',
-      timeout: 30000
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
+      },
+      timeout: 60000
     })
 
-    const result = Buffer.from(response.data)
-    const contentType = response.headers['content-type'] || ''
+    if (!response.data) throw 'Gagal memproses gambar Fake ML Lobby.'
 
-    if (!contentType.startsWith('image/') || result.length <= 1000) {
-      throw new Error('API Nexray tidak mengembalikan gambar yang valid')
-    }
+    await conn.sendMessage(m.chat, {
+      image: Buffer.from(response.data)
+    }, { quoted: m })
 
-    await conn.sendMessage(
-      m.chat,
-      {
-        image: result,
-        caption: `fake lobby ml
-
- nickname :
-${nickname}`
-      },
-      { quoted: m }
-    )
+    await m.react('✅')
   } catch (e) {
-    console.error('FAKEML ERROR:', e)
-
-    throw `Gagal membuat Fake Lobby ML.
-
-Error:
-${e.message || e}`
+    console.error('Error Fake ML Canvas:', e)
+    await m.react('❌')
+    throw e?.message || String(e)
   }
 }
 
 handler.help = ['fakeml <nickname>']
 handler.tags = ['maker']
-handler.command = /^fakeml$/i
+handler.command = /^(fakeml|mlobby|mlsolo)$/i
 handler.limit = true
-handler.register = false
 
 export default handler

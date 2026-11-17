@@ -28,9 +28,9 @@ const handler = async (m, { conn, text }) => {
     return conn.sendMessage(m.chat, { text: "Maaf, resep tidak ditemukan." }, { quoted: m });
   }
 
-  let response = "Berikut adalah hasil pencarian resep:\n\n";
+  let response = "*\`Pencarian Resep\`*\n\n";
   results.forEach((item, index) => {
-    response += `${index + 1}. ${item.namaResep}\nLink: ${item.linkResep}\nWaktu Masak: ${item.waktuMasak}\nPembuat: ${item.pembuat}\n\n`;
+    response += `${index + 1}. *${item.namaResep}*\n✿ Pembuat : ${item.pembuat}\n✿ Waktu : ${item.waktuMasak}\n✿ Link : ${item.linkResep}\n\n`;
   });
 
   response += "=====================\nJadilah yang pertama membagikannya. Yuk ikut berbagi resep dan bantu pengguna lainnya!";

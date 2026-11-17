@@ -13,16 +13,16 @@ let handler = async (m, { conn, usedPrefix }) => {
   if (id in conn.game)
     return conn.reply(m.chat, '*ᴍᴀꜱɪʜ ᴀᴅᴀ ꜱᴏᴀʟ ʙᴇʟᴜᴍ ᴛᴇʀᴊᴀᴡᴀʙ ᴅɪ ᴄʜᴀᴛ ɪɴɪ!!*', conn.game[id][0])
 
-  let src = JSON.parse(fs.readFileSync('./json/susunkata.json', 'utf-8'))
+  let src = JSON.parse(fs.readFileSync('./lib/json/susunkata.json', 'utf-8'))
   let json = src[Math.floor(Math.random() * src.length)]
 
   let caption = `
 ${json.soal}
 
 📮 Tipe : ${json.tipe}
-⏳ Timeout ${(timeout / 1000)} detik
-💬 Ketik *suska* untuk bantuan
-➕ Bonus: ${money} Money
+✿ Timeout : ${(timeout / 1000)} detik
+✿ Bantuan : Ketik *suska*
+✿ Bonus : ${money} Money
 🎟️ Limit: ${limit} Limit
 `.trim()
 

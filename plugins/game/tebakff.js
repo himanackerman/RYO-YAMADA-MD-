@@ -28,10 +28,10 @@ let handler = async (m, { conn, usedPrefix, command }) => {
 
 Lihat gambar berikut dan tebak namanya!
 
-Timeout: *${timeout / 1000} detik*
+✿ Timeout : ${timeout / 1000} detik
 Clue: ${clue}
-Ketik *${usedPrefix}whoff* untuk bantuan
-Bonus: ${poin} XP
+✿ Bantuan : Ketik *${usedPrefix}whoff*
+✿ Bonus : ${poin} XP
 `.trim()
 
     let msg = await conn.sendFile(m.chat, data.img, "ff.jpg", caption, m)

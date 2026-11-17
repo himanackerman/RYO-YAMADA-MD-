@@ -2,7 +2,7 @@
 //Script by ShirokamiRyzen
 
 import fetch from 'node-fetch'
-import { uploadPomf } from '../../lib/uploadImage.js'
+import { uploadPomf } from '../../lib/core/uploadImage.js'
 
 let handler = async (m, { conn, usedPrefix, command }) => {
     try {

@@ -29,9 +29,9 @@ let handler = async (m, { conn, usedPrefix, command }) => {
 Soal:
 ❓ *${data.soal}*
 
-Timeout: *${timeout / 1000} detik*
-Ketik *${usedPrefix}whobola* untuk bantuan
-Bonus: ${poin} XP
+✿ Timeout : ${timeout / 1000} detik
+✿ Bantuan : Ketik *${usedPrefix}whobola*
+✿ Bonus : ${poin} XP
 `.trim()
 
     let msg = await m.reply(caption)

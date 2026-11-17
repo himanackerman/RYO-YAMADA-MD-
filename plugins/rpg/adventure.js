@@ -103,25 +103,25 @@ let handler = async (m, { conn }) => {
 
 ❤️ Health berkurang *-${health}*
 
-🎁 *Hasil Petualangan*
+*\`Hasil Petualangan\`*
 
-${em('exp')} Exp: +${exp}
-${em('money')} Money: +${money}
-${em('diamond')} Diamond: +${diamond}
-${em('emerald')} Emerald: +${emerald}
-${em('potion')} Potion: +${potion}
-${em('trash')} Trash: +${trash}
+✿ ${em('exp')} Exp : +${exp}
+✿ ${em('money')} Money : +${money}
+✿ ${em('diamond')} Diamond : +${diamond}
+✿ ${em('emerald')} Emerald : +${emerald}
+✿ ${em('potion')} Potion : +${potion}
+✿ ${em('trash')} Trash : +${trash}
 
-${em('common')} Common: +${common}
-${em('uncommon')} Uncommon: +${uncommon}
-${em('mythic')} Mythic: +${mythic}
-${em('legendary')} Legendary: +${legendary}
+✿ ${em('common')} Common : +${common}
+✿ ${em('uncommon')} Uncommon : +${uncommon}
+✿ ${em('mythic')} Mythic : +${mythic}
+✿ ${em('legendary')} Legendary : +${legendary}
 
-${em('apel')} Apel: +${apel}
-${em('mangga')} Mangga: +${mangga}
-${em('jeruk')} Jeruk: +${jeruk}
-${em('pisang')} Pisang: +${pisang}
-${em('anggur')} Anggur: +${anggur}
+✿ ${em('apel')} Apel : +${apel}
+✿ ${em('mangga')} Mangga : +${mangga}
+✿ ${em('jeruk')} Jeruk : +${jeruk}
+✿ ${em('pisang')} Pisang : +${pisang}
+✿ ${em('anggur')} Anggur : +${anggur}
 `.trim()
 
         conn.reply(m.chat, txt, m)

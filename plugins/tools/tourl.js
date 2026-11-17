@@ -29,10 +29,7 @@ let handler = async (m, { conn }) => {
 
     let url = data.files[0].url || data.files[0]
 
-    await new Button(conn)
-      .setBody(`✨ *Berhasil Upload ke CDN!*\n\n✨ ${url}`)
-      .addCopy('✨ Salin URL', url, { icon: 'DOCUMENT' })
-      .send(m.chat, { quoted: m })
+    await conn.sendMessage(m.chat, { text: `✨ *Berhasil Upload ke CDN!*\n\n✨ ${url}` }, { quoted: m })
 
   } catch (e) {
     console.error(e)

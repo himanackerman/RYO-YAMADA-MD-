@@ -11,14 +11,14 @@ let handler = async (m) => {
     .map(v => {
       user[v] = user[v] || 0
       return user[v] > 0
-        ? `• ${global.rpg.emoticon(v)} ${v}: ${user[v]}`
+        ? `✿ ${global.rpg.emoticon(v)} ${v.charAt(0).toUpperCase() + v.slice(1)} : ${user[v]}`
         : null
     })
     .filter(Boolean)
     .join('\n')
 
   let caption = isi
-    ? `📮 *KANDANG KAMU*\n\n${isi}`
+    ? `*\`KANDANG KAMU\`*\n\n${isi}`
     : '📮 Kandang kamu masih kosong!'
 
   m.reply(caption)

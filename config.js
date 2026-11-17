@@ -27,7 +27,7 @@ global.usePairingCode = true   // true = pairing code, false = QR
 global.pairingNumber = '62xxx' // isi buat pairing code 
 global.pairingCode = '12345678'   // opsional, 8 karakter
 global.owner = [
-  ['628xxx', 'Hilman', true]
+  ['62xxx', 'Hilman', true]
 ]
 global.mods = []
 global.prems = []
@@ -37,6 +37,7 @@ global.nameown = 'Hilman' //nama Owner
 global.version = '12.5.0'
 global.autotyping = false // default mati
 global.autorecording = false // default mati
+global.autocorrect = false // default mati
 global.prefix = '.' // custom prefix kosongan kalo mau nonprefix 
 global.backupGroup = '' // opsional kalo mau kirim backup ke grup tertentu isi id grup
 
@@ -107,8 +108,8 @@ global.APIs = {
     faa: 'https://api-faa.my.id',
     deline: 'https://api.deline.web.id',
     nexray: 'https://api.nexray.eu.cc',
-    kyzzz: 'https://api.kyzzz.eu.cc'
-    
+    kyzzz: 'https://api.kyzzz.eu.cc',
+    xrina: 'https://apiii-xrina.my.id'
 }
 
 global.APIKeys = {

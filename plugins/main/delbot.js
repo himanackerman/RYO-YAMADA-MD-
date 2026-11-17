@@ -1,4 +1,4 @@
-import { stopSubBot } from '../../lib/jadibot.js'
+import { stopSubBot } from '../../lib/core/jadibot.js'
 
 let handler = async (m, { conn, args, isOwner }) => {
   const number = (args[0] || '').replace(/[^0-9]/g, '')

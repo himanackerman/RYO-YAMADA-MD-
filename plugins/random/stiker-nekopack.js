@@ -6,7 +6,7 @@ sumber : https://whatsapp.com/channel/0029VbAYjQgKrWQulDTYcg2K
 */
 
 import fetch from 'node-fetch'
-import { sticker } from '../../lib/sticker.js'
+import { sticker } from '../../lib/core/sticker.js'
 
 let handler = async (m, { conn, command }) => {
   

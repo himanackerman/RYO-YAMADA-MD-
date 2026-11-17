@@ -1,49 +1,64 @@
-let handler = async (m, { conn, text }) => {
-  if (!text) throw `Contoh:
-.aio https://vm.tiktok.com/ZSXwf1TAm/`
+import { download } from '../../lib/scrape/savefrom.js'
+
+let handler = async (m, { conn, text, usedPrefix, command }) => {
+  const url = (text || '').trim()
+
+  if (!url || !/^https?:\/\//i.test(url)) {
+    return m.reply(
+      `*Format salah!*\n\n` +
+      `Ketik:\n` +
+      `*${usedPrefix + command} <url video>*\n\n` +
+      `*Contoh:* ${usedPrefix + command} https://www.instagram.com/p/xxxxx/`
+    )
+  }
 
   await m.react('🕒')
 
   try {
-    const res = await fetch(`${global.APIs.nexray}/downloader/aio?url=${encodeURIComponent(text)}`)
-    const json = await res.json()
+    const data = await download(url)
 
-    if (!json.status) throw new Error(json.message || 'Gagal mengambil media.')
+    if (!data.url || !data.url.length) {
+      throw new Error('Media tidak ditemukan atau format tidak didukung.')
+    }
 
-    const data = json.result
+    const title = data.meta?.title || data.id || 'Media'
+    const duration = data.meta?.duration ? `${data.meta.duration} Detik` : '-'
+    const hosting = data.hosting || '-'
 
-    const media =
-      data.medias.find(v => v.type === 'video' && v.quality === 'hd_no_watermark') ||
-      data.medias.find(v => v.type === 'video') ||
-      data.medias.find(v => v.type === 'audio')
+    const caption = `*\`AIO Downloader\`*\n\n` +
+      `✿ Title : ${title}\n` +
+      `✿ Hosting : ${hosting}\n` +
+      `✿ Duration : ${duration}`
 
-    if (!media) throw 'Media tidak ditemukan.'
+    const chosenMedia = data.url.find(v => v.type === 'mp4' || v.ext === 'mp4' || v.url?.includes('.mp4')) ||
+      data.url.find(v => v.url) ||
+      data.url[0]
 
-    if (media.type === 'audio') {
+    const mediaUrl = chosenMedia.url
+    if (!mediaUrl) throw new Error('URL download tidak ditemukan.')
+
+    const isAudio = chosenMedia.type === 'audio' || chosenMedia.ext === 'mp3' || chosenMedia.audio
+
+    if (isAudio) {
       await conn.sendMessage(m.chat, {
-        audio: { url: media.url },
+        audio: { url: mediaUrl },
         mimetype: 'audio/mpeg',
-        fileName: `${data.title || 'audio'}.mp3`,
+        fileName: `${title}.mp3`,
         ptt: false
       }, { quoted: m })
     } else {
-      const size = media.data_size || 0
-      const isLarge = size > 50 * 1024 * 1024
+      const isFileDoc = (chosenMedia.filesize && chosenMedia.filesize > 50 * 1024 * 1024)
 
-      const caption = `❏ Author      : ${data.author || '-'}
-❏ Duration    : ${Math.floor((data.duration || 0) / 1000)} Detik
-❏ Title       : ${data.title || '-'}`
-
-      if (isLarge) {
+      if (isFileDoc) {
         await conn.sendMessage(m.chat, {
-          document: { url: media.url },
-          fileName: `${data.title || 'video'}.mp4`,
+          document: { url: mediaUrl },
+          fileName: `${title}.mp4`,
           mimetype: 'video/mp4',
           caption
         }, { quoted: m })
       } else {
         await conn.sendMessage(m.chat, {
-          video: { url: media.url },
+          video: { url: mediaUrl },
           caption
         }, { quoted: m })
       }
@@ -51,13 +66,13 @@ let handler = async (m, { conn, text }) => {
 
     await m.react('✅')
   } catch (e) {
-    console.error(e)
+    console.error('Error AIO SaveFrom:', e)
     await m.react('❌')
-    throw e.message || 'Terjadi kesalahan.'
+    throw e?.message || String(e)
   }
 }
 
-handler.help = ['aio']
+handler.help = ['aio <url>']
 handler.tags = ['downloader']
 handler.command = /^aio$/i
 handler.limit = true

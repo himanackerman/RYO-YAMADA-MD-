@@ -1,7 +1,7 @@
 import fs from 'fs'
 
 const kbbi = JSON.parse(
-	fs.readFileSync('./json/kbbi.json')
+	fs.readFileSync('./lib/json/kbbi.json')
 )
 
 const game = `╔══「 *Kata Bersambung* 」

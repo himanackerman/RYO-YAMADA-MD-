@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { canLevelUp, xpRange } from '../../lib/levelling.js';
+import { canLevelUp, xpRange } from '../../lib/core/levelling.js';
 
 let handler = async (m, { conn, usedPrefix }) => {
   let who = m.sender;

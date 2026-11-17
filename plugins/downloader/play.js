@@ -18,7 +18,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
 
     const video = videos[0]
 
-    const caption = `Play Music\n\n✿ Title : ${video.title}\n✿ Duration : ${video.timestamp || '-'}\n✿ Views : ${formatNumber(video.views)}\n✿ Channel : ${video.author.name}${video.author.verified ? ' ✓' : ''}\n✿ Upload : ${video.ago || '-'}\n\nSilakan pilih format download di bawah.`
+    const caption = `*\`Play Music\`*\n\n✿ Title : ${video.title}\n✿ Duration : ${video.timestamp || '-'}\n✿ Views : ${formatNumber(video.views)}\n✿ Channel : ${video.author.name}${video.author.verified ? ' ✓' : ''}\n✿ Upload : ${video.ago || '-'}\n\nSilakan pilih format download di bawah.`
 
     await new ButtonV2(conn)
       .setBody(caption)

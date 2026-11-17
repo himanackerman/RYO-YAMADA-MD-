@@ -33,14 +33,14 @@ const handler = async (m, { text, usedPrefix, command }) => {
   if (!results.length) {
     return m.reply(`*\`Plugin Search\`*
 
-✿ *\`Keyword\`* : ${text}
-✿ *\`Total\`* : 0`)
+✿ Keyword : ${text}
+✿ Total : 0`)
   }
 
   const res = `*\`Plugin Search\`*
 
-✿ *\`Keyword\`* : ${text}
-✿ *\`Total\`* : ${results.length}
+✿ Keyword : ${text}
+✿ Total : ${results.length}
 
 ${results.map(v => `✿ ${v}`).join('\n')}`
 

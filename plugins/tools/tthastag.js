@@ -21,12 +21,12 @@ ${usedPrefix + command} #anime`)
 
     const { report, top10, related, trending } = data.result
 
-    let caption = `— *TIKTOK HASHTAGS* —
+    let caption = `*\`TikTok Hashtags\`*
 
-❀ *Hashtag* : ${hashtag}
-❀ *Overall Posts* : ${report.overallPosts || '-'}
-❀ *Overall Views* : ${report.overallViews || '-'}
-❀ *Views / Post* : ${report.viewsPerPost || '-'}`
+✿ Hashtag : ${hashtag}
+✿ Overall Posts : ${report.overallPosts || '-'}
+✿ Overall Views : ${report.overallViews || '-'}
+✿ Views / Post : ${report.viewsPerPost || '-'}`
 
     if (top10.length) {
       caption += `

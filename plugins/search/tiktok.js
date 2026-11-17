@@ -73,9 +73,9 @@ const handler = async (m, { conn, text, usedPrefix, command }) => {
       return m.reply('Media video tidak ditemukan pada hasil pencarian.')
     }
 
-    const caption = `— tiktok search —\n\n` +
-      `❀ Judul : ${result.title || 'TikTok Video'}\n` +
-      `❀ Uploader : ${result.author?.nickname || 'Unknown'}`
+    const caption = `*\`TikTok Search\`*\n\n` +
+      `✿ Judul : ${result.title || 'TikTok Video'}\n` +
+      `✿ Uploader : ${result.author?.nickname || 'Unknown'}`
 
     await sendCustomMessage(
       client,

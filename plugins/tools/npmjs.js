@@ -16,15 +16,15 @@ const handler = async (m, { conn, text, usedPrefix, command }) => {
       return conn.edit(msg, `Tidak ada hasil untuk "${query}"`, m);
     }
 
-    let caption = '— npmjs search —\n\n';
+    let caption = '*`NPMJS Search`*\n\n';
     
     result.objects.slice(0, 5).forEach((pkg, index) => {
       const package_data = pkg.package;
-      caption += `${index + 1}. ❀ name :\n${package_data.name}\n\n`;
-      caption += `❀ version :\n${package_data.version}\n\n`;
-      caption += `❀ description :\n${package_data.description || 'Tidak ada deskripsi'}\n\n`;
-      caption += `❀ author :\n${package_data.author?.name || 'Unknown'}\n\n`;
-      caption += `❀ url :\n${package_data.links?.npm || 'N/A'}\n\n`;
+      caption += `${index + 1}. ✿ name :\n${package_data.name}\n\n`;
+      caption += `✿ version :\n${package_data.version}\n\n`;
+      caption += `✿ description :\n${package_data.description || 'Tidak ada deskripsi'}\n\n`;
+      caption += `✿ author :\n${package_data.author?.name || 'Unknown'}\n\n`;
+      caption += `✿ url :\n${package_data.links?.npm || 'N/A'}\n\n`;
       caption += '—————————————\n\n';
     });
 

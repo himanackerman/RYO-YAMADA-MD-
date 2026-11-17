@@ -39,10 +39,10 @@ let handler = async (m, { conn }) => {
     conn.reply(
         m.chat,
         `
-🦹 *BERHASIL MERAMPOK*
+*\`BERHASIL MERAMPOK\`*
 
-👤 Target : @${who.split('@')[0]}
-💰 Hasil : ${dapat.toLocaleString('id-ID')} Money
+✿ 👤 Target : @${who.split('@')[0]}
+✿ 💰 Hasil : ${dapat.toLocaleString('id-ID')} Money
 
 🏃 Cepat kabur sebelum ketahuan!
         `.trim(),

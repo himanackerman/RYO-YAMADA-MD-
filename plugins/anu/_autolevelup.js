@@ -1,5 +1,5 @@
-import { canLevelUp } from '../../lib/levelling.js'
-import { canvasLevelUp } from '../../lib/canvaslevelup.js'
+import { canLevelUp } from '../../lib/core/levelling.js'
+import { canvasLevelUp } from '../../lib/canvas/canvaslevelup.js'
 
 let handler = m => m
 
@@ -77,11 +77,11 @@ handler.before = async function (m) {
 				image: buffer,
 				caption: `*\`Level Up\`*
 
-✿ *\`Nama\`* : ${await this.getName(m.sender)}
-✿ *\`Level Sebelumnya\`* : ${before}
-✿ *\`Level Sekarang\`* : ${user.level}
-✿ *\`Naik Level\`* : +${user.level - before}
-✿ *\`Role Baru\`* : ${user.role}`
+✿ Nama : ${await this.getName(m.sender)}
+✿ Level Sebelumnya : ${before}
+✿ Level Sekarang : ${user.level}
+✿ Naik Level : +${user.level - before}
+✿ Role Baru : ${user.role}`
 			},
 			{ quoted: m }
 		)

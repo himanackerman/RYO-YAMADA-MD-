@@ -29,12 +29,12 @@ let handler = async (m, { conn }) => {
   user.lastclaim = now
 
   let text = `
-🎁 *DAILY CLAIM BERHASIL*
+*\`DAILY CLAIM BERHASIL\`*
 
-💵 Money : ${money}
-✨ Exp   : ${exp}
-🎫 Limit : ${limit}
-🥤 Potion: ${potion}
+✿ 💵 Money : ${money}
+✿ ✨ Exp : ${exp}
+✿ 🎫 Limit : ${limit}
+✿ 🥤 Potion : ${potion}
 
 Datang lagi besok ya.
 `.trim()

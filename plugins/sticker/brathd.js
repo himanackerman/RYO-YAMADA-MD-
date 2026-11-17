@@ -1,5 +1,5 @@
 import scraper from '@zenaveline/scraper'
-import { sticker } from '../../lib/sticker.js'
+import { sticker } from '../../lib/core/sticker.js'
 
 let handler = async (m, { conn, text }) => {
   if (m.quoted?.text) text = m.quoted.text

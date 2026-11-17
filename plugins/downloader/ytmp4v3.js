@@ -17,9 +17,11 @@ ${usedPrefix + command} https://youtu.be/dQw4w9WgXcQ`)
       throw res.msg || res.error || 'Gagal mengunduh video.'
     }
 
-    const caption = `*Title:* ${res.title}
-*Format:* ${res.format}
-*Duration:* ${res.duration} detik`
+    const caption = `*\`YouTube MP4\`*
+
+✿ Title : ${res.title}
+✿ Format : ${res.format}
+✿ Duration : ${res.duration} detik`
 
     await conn.sendFile(
       m.chat,

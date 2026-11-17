@@ -1,10 +1,10 @@
-import { smsg } from './lib/simple.js'
-import { initUser, initChat, initSettings } from './lib/database.js'
-import { trackAlbum } from './lib/album.js'
+import { smsg } from './lib/core/simple.js'
+import { initUser, initChat, initSettings } from './lib/core/database.js'
+import { trackAlbum } from './lib/core/album.js'
 import { format } from 'util'
 import { fileURLToPath } from 'url'
 import path, { join } from 'path'
-import { unwatchFile, watchFile, readFileSync } from 'fs'
+import { unwatchFile, watchFile, readFileSync, existsSync } from 'fs'
 import sharp from 'sharp'
 import chalk from 'chalk'
 import fetch from 'node-fetch'
@@ -266,7 +266,7 @@ for (let name in global.plugins) {
 
                 m.isCommand = true
                 let xp = 'exp' in plugin ? parseInt(plugin.exp) : 17
-                if (xp < 200 && user?.autolevelup) m.exp += xp
+                if (xp < 200 && (global.db.data.chats[m.chat]?.autolevelup || user?.autolevelup)) m.exp += xp
 
                 if (!isPrems && plugin.limit && user.limit < plugin.limit * 1) {
                     this.reply(m.chat, `[❗] Limit harian kamu telah habis`, m)
@@ -329,7 +329,7 @@ for (let name in global.plugins) {
         await global.db.write?.()
 
     try {
-        if (!opts['noprint']) await (await import(`./lib/print.js`)).default(m, this)
+        if (!opts['noprint']) await (await import(`./lib/core/print.js`)).default(m, this)
     } catch (e) {
         console.log(e)
     }
@@ -353,68 +353,149 @@ export async function participantsUpdate({ id, participants, action }) {
     let memberCount = groupMetadata.participants?.length || 0
 
     for (let userObj of participants) {
-        let user = typeof userObj === 'object'
-            ? (userObj.phoneNumber || userObj.id || userObj.lid || '')
-            : userObj
+        let rawId = typeof userObj === 'object'
+            ? (userObj.id || userObj.lid || userObj.phoneNumber || '')
+            : String(userObj || '')
 
-        let ids = await this.findUserId(user).catch(() => null)
+        rawId = this.decodeJid(rawId)
+        if (!rawId) continue
 
-        let displayName =
-            global.nameCache?.[ids?.lid] ||
-            global.nameCache?.[user] ||
-            global.nameCache?.[ids?.phoneNumber] ||
-            this.getName(user) ||
-            user.split('@')[0]
+        let pnJid = rawId
+        if (typeof userObj === 'object' && userObj.phoneNumber) {
+            let num = String(userObj.phoneNumber).replace(/[^0-9]/g, '')
+            if (num) pnJid = num + '@s.whatsapp.net'
+        } else if (rawId.endsWith('@lid')) {
+            try {
+                const found = await this.findUserId(rawId)
+                if (found?.phoneNumber && found.phoneNumber !== 'id-not-found') {
+                    pnJid = this.decodeJid(found.phoneNumber)
+                }
+            } catch {}
+
+            if (pnJid.endsWith('@lid')) {
+                try {
+                    const lidUser = rawId.split('@')[0].split(':')[0]
+                    const revFile = path.join('./sessions', `lid-mapping-${lidUser}_reverse.json`)
+                    if (existsSync(revFile)) {
+                        const pnNum = JSON.parse(readFileSync(revFile, 'utf8'))
+                        if (pnNum) pnJid = `${pnNum}@s.whatsapp.net`
+                    }
+                } catch {}
+            }
+        }
+
+        const pnNumber = pnJid.split('@')[0].replace(/[^0-9]/g, '')
+
+        const nameCandidates = [
+            global.db?.data?.users?.[pnJid]?.name,
+            global.db?.data?.users?.[pnJid]?.nama,
+            global.db?.data?.users?.[rawId]?.name,
+            global.db?.data?.users?.[rawId]?.nama,
+            global.nameCache?.[pnJid],
+            global.nameCache?.[rawId],
+            this.chats?.[pnJid]?.name,
+            this.chats?.[rawId]?.name,
+            this.chats?.[pnJid]?.notify,
+            this.chats?.[rawId]?.notify,
+            this.chats?.[pnJid]?.vname,
+            this.contacts?.[pnJid]?.name,
+            this.contacts?.[rawId]?.name,
+            this.contacts?.[pnJid]?.notify
+        ]
+
+        let memberName = ''
+        for (let cand of nameCandidates) {
+            if (cand && typeof cand === 'string') {
+                const trimmed = cand.trim()
+                if (trimmed.length > 0 && !/^\+?[0-9\s-]+$/.test(trimmed)) {
+                    memberName = trimmed
+                    break
+                }
+            }
+        }
+
+        if (!memberName) {
+            try {
+                const n = this.getName ? this.getName(pnJid) : ''
+                if (n && typeof n === 'string' && !/^\+?[0-9\s-]+$/.test(n.trim())) {
+                    memberName = n.trim()
+                }
+            } catch {}
+        }
+
+        if (!memberName) {
+            memberName = pnNumber || 'Member'
+        }
 
         let pp = 'https://i.ibb.co/1s8T3sY/48f7ce63c7aa.jpg'
         try {
-            pp = await this.profilePictureUrl(user, 'image')
-        } catch {}
+            pp = await this.profilePictureUrl(pnJid, 'image')
+        } catch {
+            try {
+                if (rawId) pp = await this.profilePictureUrl(rawId, 'image')
+            } catch {}
+        }
 
         let text = ''
+        let mentions = []
 
         // ================= WELCOME =================
         if (action === 'add') {
             text = chat.sWelcome?.trim()
                 ? chat.sWelcome
-                : `👋 Halo ${displayName}!\n\nSelamat datang di *${groupName}* ✨`
+                : `👋 Halo @${pnNumber}!\n\nSelamat datang di *${groupName}* ✨`
+
+            text = text
+                .replace(/@user/g, `@${pnNumber}`)
+                .replace(/@subject/g, groupName)
+                .replace(/@desc/g, groupMetadata.desc || '')
+
+            mentions = [pnJid, rawId].filter(v => v && v.includes('@'))
         }
 
         // ================= GOODBYE =================
-        if (action === 'remove') {
+        else if (action === 'remove') {
             text = chat.sBye?.trim()
                 ? chat.sBye
-                : `✨ Sayonara ${displayName}`
+                : `✨ Sayonara ${memberName}`
+
+            text = text
+                .replace(/@user/g, memberName)
+                .replace(/@subject/g, groupName)
+                .replace(/@desc/g, groupMetadata.desc || '')
+
+            mentions = []
         }
 
         // ================= PROMOTE =================
-        if (action === 'promote') {
+        else if (action === 'promote') {
             text = (chat.sPromote || this.spromote || '@user Sekarang jadi admin!')
-                .replace('@user', displayName)
+                .replace(/@user/g, `@${pnNumber}`)
+                .replace(/@subject/g, groupName)
 
-            await this.sendMessage(id, { text })
+            mentions = [pnJid, rawId].filter(v => v && v.includes('@'))
+            await this.sendMessage(id, { text, mentions })
             continue
         }
 
         // ================= DEMOTE =================
-        if (action === 'demote') {
+        else if (action === 'demote') {
             text = (chat.sDemote || this.sdemote || '@user Sekarang bukan lagi admin!')
-                .replace('@user', displayName)
+                .replace(/@user/g, `@${pnNumber}`)
+                .replace(/@subject/g, groupName)
 
-            await this.sendMessage(id, { text })
+            mentions = [pnJid, rawId].filter(v => v && v.includes('@'))
+            await this.sendMessage(id, { text, mentions })
+            continue
+        } else {
             continue
         }
-
-        text = text
-            .replace('@user', displayName)
-            .replace('@subject', groupName)
-            .replace('@desc', groupMetadata.desc || '')
 
         try {
             const {
                 createWelcomeCanvas,
                 createGoodbyeCanvas
-            } = await import('./lib/welcomeCanvas.js')
+            } = await import('./lib/canvas/welcomeCanvas.js')
 
             let buf
 
@@ -422,25 +503,30 @@ export async function participantsUpdate({ id, participants, action }) {
                 buf = await createWelcomeCanvas({
                     groupName,
                     avatarUrl: pp,
-                    name: displayName,
+                    name: memberName || pnNumber,
                     count: memberCount + 1
                 })
             } else if (action === 'remove') {
                 buf = await createGoodbyeCanvas({
                     groupName,
                     avatarUrl: pp,
-                    name: displayName,
+                    name: memberName || pnNumber,
                     count: memberCount
                 })
             }
 
-            await this.sendMessage(id, {
+            const sendOptions = {
                 image: buf,
                 caption: text
-            })
+            }
+            if (mentions.length) sendOptions.mentions = mentions
+
+            await this.sendMessage(id, sendOptions)
         } catch (e) {
-            console.log('WELCOME ERROR:', e)
-            await this.sendMessage(id, { text })
+            console.log('WELCOME/GOODBYE ERROR:', e)
+            const fallbackOptions = { text }
+            if (mentions.length) fallbackOptions.mentions = mentions
+            await this.sendMessage(id, fallbackOptions)
         }
     }
 }

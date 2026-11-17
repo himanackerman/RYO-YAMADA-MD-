@@ -26,13 +26,13 @@ let handler = async (m, { conn }) => {
   let caption = `
 — tebak hewan —
 
-❀ deskripsi :
+✿ deskripsi :
 ${soal}
 
-❀ clue : ${clue}
+✿ clue : ${clue}
 
-❀ waktu : 60 detik
-❀ hadiah : ${reward} gold
+✿ waktu : 60 detik
+✿ hadiah : ${reward} gold
 
 Ketik *nyerah* untuk menyerah
 `.trim()
@@ -80,7 +80,7 @@ handler.before = async function (m, { conn }) {
     m.reply(`
 🏳️ menyerah!
 
-❀ jawaban : ${data.jawaban}
+✿ jawaban : ${data.jawaban}
 `.trim())
 
     delete conn.tebakhewan[id]
@@ -102,8 +102,8 @@ handler.before = async function (m, { conn }) {
       `
 🎉 benar!
 
-❀ jawaban : ${data.jawaban}
-❀ hadiah : +${data.reward} gold
+✿ jawaban : ${data.jawaban}
+✿ hadiah : +${data.reward} gold
 `.trim(),
       m
     )

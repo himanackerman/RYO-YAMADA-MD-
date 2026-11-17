@@ -6,9 +6,9 @@ const handler = async (m, { conn, text, usedPrefix, command }) => {
 			`${usedPrefix + command} Halo semuanya\n` +
 			`${usedPrefix + command} perempuan|Halo semuanya\n` +
 			`${usedPrefix + command} laki|Halo semuanya\n\n` +
-			`❀ Voice tersedia:\n` +
-			`❀ laki (default)\n` +
-			`❀ perempuan`
+			`✿ Voice tersedia:\n` +
+			`✿ laki (default)\n` +
+			`✿ perempuan`
 		);
 	}
 

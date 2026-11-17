@@ -12,7 +12,7 @@ let handler = async (m, { conn, usedPrefix }) => {
   if (id in conn.lengkapikalimat)
     return m.reply('Masih ada soal yang belum terjawab di chat ini!')
 
-  let src = JSON.parse(fs.readFileSync('./json/lengkapikalimat.json'))
+  let src = JSON.parse(fs.readFileSync('./lib/json/lengkapikalimat.json'))
   let json = src[Math.floor(Math.random() * src.length)]
 
   let soal = json.soal || '-'
@@ -23,10 +23,10 @@ let handler = async (m, { conn, usedPrefix }) => {
 
 ${soal}
 
-⏱️ Timeout ${(timeout / 1000)} detik
-💎 Bonus ${poin} XP
+✿ Timeout : ${(timeout / 1000)} detik
+✿ Bonus : ${poin} XP
 
-Ketik *nyerah* untuk menyerah
+✿ Menyerah : Ketik *nyerah*
 `.trim()
 
   let msg = await m.reply(caption)

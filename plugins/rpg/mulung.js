@@ -33,13 +33,13 @@ let handler = async (m, { conn }) => {
   user.lastmulung = now
 
   m.reply(`
-♻️ *Kamu selesai mulung dan menemukan:*
+*\`Hasil Mulung\`*
 
-🧴 Botol: ${hasil.botol}
-📦 Kardus: ${hasil.kardus}
-🥫 Kaleng: ${hasil.kaleng}
-🍶 Gelas: ${hasil.gelas}
-🛍 Plastik: ${hasil.plastik}
+✿ 🧴 Botol : ${hasil.botol}
+✿ 📦 Kardus : ${hasil.kardus}
+✿ 🥫 Kaleng : ${hasil.kaleng}
+✿ 🍶 Gelas : ${hasil.gelas}
+✿ 🛍 Plastik : ${hasil.plastik}
 
 Cek isi karung: *.karung*
 `.trim())

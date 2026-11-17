@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { sticker } from '../../lib/sticker.js'
+import { sticker } from '../../lib/core/sticker.js'
 
 function emojiToNotoCodepoint(emoji) {
     return [...emoji]

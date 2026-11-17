@@ -8,10 +8,7 @@ const handler = async (m, { conn, text, command, isOwner }) => {
 
       let id = m.chat
 
-      return await new Button(conn)
-        .setBody(`✨ *ID Grup:*\n${id}`)
-        .addCopy('✨ Salin ID', id, { icon: 'DOCUMENT' })
-        .send(m.chat, { quoted: m })
+      return await conn.sendMessage(m.chat, { text: `✨ *ID Grup:*\n${id}` }, { quoted: m })
     }
 
     if (/^(cekidch|idch)$/i.test(command)) {
@@ -29,10 +26,7 @@ const handler = async (m, { conn, text, command, isOwner }) => {
 
       let id = res?.id || result + '@newsletter'
 
-      return await new Button(conn)
-        .setBody(`✨ *ID Channel:*\n${id}`)
-        .addCopy('✨ Salin ID', id, { icon: 'DOCUMENT' })
-        .send(m.chat, { quoted: m })
+      return await conn.sendMessage(m.chat, { text: `✨ *ID Channel:*\n${id}` }, { quoted: m })
     }
 
   } catch (e) {

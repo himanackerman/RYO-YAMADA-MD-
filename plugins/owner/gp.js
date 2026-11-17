@@ -29,13 +29,7 @@ let handler = async (m, { conn, isROwner, usedPrefix, command, text }) => {
     if (stderr) throw new Error(stderr)
 
     const code = stdout.trim()
-    const bodyText = `📄 *Plugin:* ${target}.js\n📁 *Folder:* plugins/${target.includes('/') ? target.split('/')[0] : ''}\n\nTekan tombol di bawah untuk menyalin source code.`
-
-    await new Button(conn)
-      .setBody(bodyText)
-      .setFooter('ʀʏᴏ ʏᴀᴍᴀᴅᴀ - ᴍᴅ')
-      .addCopy(' Copy Source', code, { icon: 'DOCUMENT' })
-      .send(m.chat, { quoted: m })
+    await conn.sendMessage(m.chat, { text: code }, { quoted: m })
 
     await m.react('✅')
   } catch (e) {

@@ -20,16 +20,16 @@ ${usedPrefix + command} satpam|Jakarta`)
 
         const list = data.result.slice(0, 5)
 
-        let caption = `💼 *Jobstreet Search*\n\n`
+        let caption = `*\`Jobstreet Search\`*\n\n`
 
         for (let i = 0; i < list.length; i++) {
             let v = list[i]
             caption += `${i + 1}. *${v.judul}*\n`
-            caption += `🏢 ${v.perusahaan}\n`
-            caption += `📍 ${v.lokasi}\n`
-            caption += `💰 ${v.gaji}\n`
-            caption += `📅 ${v.tanggal}\n`
-            caption += `🔗 ${v.link}\n\n`
+            caption += `✿ Perusahaan : ${v.perusahaan}\n`
+            caption += `✿ Lokasi : ${v.lokasi}\n`
+            caption += `✿ Gaji : ${v.gaji}\n`
+            caption += `✿ Tanggal : ${v.tanggal}\n`
+            caption += `✿ Link : ${v.link}\n\n`
         }
 
         const logo = list[0].logo

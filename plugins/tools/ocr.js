@@ -40,7 +40,7 @@ let handler = async (m, { conn }) => {
     let teks = `
 — ocr result —
 
-❀ hasil scan :
+✿ hasil scan :
 ${text.trim()}
 `
 

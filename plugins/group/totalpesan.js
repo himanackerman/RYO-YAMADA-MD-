@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Path ke file chat.json
-let chatDbPath = path.join(__dirname, './lib/chat.json');
+let chatDbPath = path.join(__dirname, '../../lib/json/chat.json');
 
 // Fungsi untuk membaca database dari file chat.json
 const loadChatData = () => {

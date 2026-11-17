@@ -56,11 +56,11 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
       fileName: d.filename,
       caption: `*\`Website Record\`*
 
-✿ *\`URL\`* : ${url}
-✿ *\`Device\`* : ${d.device_label}
-✿ *\`Resolusi\`* : ${d.width}×${d.height}
-✿ *\`Tipe\`* : ${d.type}
-✿ *\`Expired\`* : ${d.expires_in_seconds} detik`
+✿ URL : ${url}
+✿ Device : ${d.device_label}
+✿ Resolusi : ${d.width}×${d.height}
+✿ Tipe : ${d.type}
+✿ Expired : ${d.expires_in_seconds} detik`
     }, { quoted: m })
   }
 
@@ -74,7 +74,7 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     text: `Pilih device untuk merekam website.\n\nURL : ${text}`,
     footer: "Website Record",
     nativeFlow: [{
-      text: "❀ Pilih Device",
+      text: "✿ Pilih Device",
       sections: [{
         title: "Daftar Device",
         rows

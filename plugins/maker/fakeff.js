@@ -56,9 +56,9 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
     } catch (e) {}
 
     const caption =
-      `*— FAKE FF LOBBY —*\n\n` +
-      `Username : ${name}\n` +
-      `Lobby ID : #${selectedLobby}`
+      `*\`Fake FF Lobby\`*\n\n` +
+      `✿ Username : ${name}\n` +
+      `✿ Lobby ID : #${selectedLobby}`
 
     await conn.sendMessage(
       m.chat,

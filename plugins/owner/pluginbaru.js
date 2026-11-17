@@ -40,7 +40,7 @@ let handler = async (m, { conn, usedPrefix, command }) => {
 
   const latest = files.slice(0, 10)
 
-  let caption = `✨ *DAFTAR PLUGIN TERBARU*\n\n`
+  let caption = `*\`DAFTAR PLUGIN TERBARU\`*\n\n`
 
   latest.forEach((file, index) => {
     const date = new Date(file.mtime).toLocaleString('id-ID', {

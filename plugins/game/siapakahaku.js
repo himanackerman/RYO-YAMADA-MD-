@@ -9,7 +9,7 @@ let handler = async (m, { conn, usedPrefix }) => {
   let id = m.chat
   if (id in conn.siapakahaku) return m.reply('Masih ada soal yang belum terjawab di chat ini!')
 
-  let src = JSON.parse(fs.readFileSync('./json/siapakahaku.json'))
+  let src = JSON.parse(fs.readFileSync('./lib/json/siapakahaku.json'))
   let json = src[Math.floor(Math.random() * src.length)]
 
   let caption = `
@@ -17,10 +17,10 @@ let handler = async (m, { conn, usedPrefix }) => {
 
 ${json.soal}
 
-⏱️ Timeout ${(timeout / 1000)} detik
-💎 Bonus ${poin} XP
+✿ Timeout : ${(timeout / 1000)} detik
+✿ Bonus : ${poin} XP
 
-Ketik *${usedPrefix}who* untuk bantuan
+✿ Bantuan : Ketik *${usedPrefix}who*
 `.trim()
 
   let msg = await m.reply(caption)

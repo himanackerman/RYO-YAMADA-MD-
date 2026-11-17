@@ -19,25 +19,25 @@ const handler = async (m, { conn, text, usedPrefix, command }) => {
 
     const caption = `— youtube stalk —
 
-❀ name :
+✿ name :
 ${data.name}
 
-❀ id :
+✿ id :
 ${data.id}
 
-❀ url :
+✿ url :
 ${data.url}
 
-❀ subscribers :
+✿ subscribers :
 ${data.subscribers}
 
-❀ video count :
+✿ video count :
 ${data.video_count}
 
-❀ verified :
+✿ verified :
 ${data.verified ? 'Ya' : 'Tidak'}
 
-❀ about :
+✿ about :
 ${data.about}`;
 
     await conn.sendMessage(

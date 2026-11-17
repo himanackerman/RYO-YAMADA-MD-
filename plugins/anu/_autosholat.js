@@ -1,6 +1,9 @@
 import moment from "moment-timezone"
 
 export async function before(m) {
+  const chat = global.db.data?.chats?.[m.chat]
+  if (!chat || !chat.autosolat) return false
+
   this.autosholat = this.autosholat || {}
 
   const who = m.mentionedJid?.[0] || (m.fromMe ? this.user.jid : m.sender)
@@ -28,11 +31,12 @@ export async function before(m) {
   if (Object.values(jadwalSholat).includes(timeNow)) {
     const sholat = Object.keys(jadwalSholat).find(key => jadwalSholat[key] === timeNow)
 
-    const caption = `@${who.split('@')[0]},
-Waktu *${sholat}* telah tiba, ambillah air wudhu dan segeralah shalat.
+    const caption = `*\`PENGINGAT SHOLAT\`*
 
-*${timeNow}*
-_untuk wilayah Jakarta dan sekitarnya._`
+✿ Waktu   : *${sholat}* (${timeNow} WIB)
+✿ Wilayah : Jakarta dan sekitarnya
+
+Waktu sholat *${sholat}* telah tiba, ambillah air wudhu dan segeralah menunaikan shalat.`
 
     this.autosholat[id] = {
       msg: await this.reply(

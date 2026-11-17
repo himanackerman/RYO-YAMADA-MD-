@@ -12,7 +12,7 @@ let handler = async (m, { conn }) => {
   if (id in conn.family100)
     return m.reply('Masih ada kuis yang belum selesai di chat ini')
 
-  let src = JSON.parse(fs.readFileSync('./json/family100.json', 'utf-8'))
+  let src = JSON.parse(fs.readFileSync('./lib/json/family100.json', 'utf-8'))
   let json = src[Math.floor(Math.random() * src.length)]
 
   let soal = json.soal

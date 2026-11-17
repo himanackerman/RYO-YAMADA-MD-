@@ -183,14 +183,14 @@ let handler = async (m, { conn }) => {
 
     const image = canvas.toBuffer('image/png')
 
-    const caption = `— ${global.namebot} —
+    const caption = `*\`Bot Status\`*
 
-❀ Speed : ${speed} ms
-❀ Runtime : ${format(uptime)}
-❀ RAM : ${ramUsed} MB
-❀ Users : ${users}
-❀ Groups : ${groups}
-❀ Premium : ${premium}`.trim()
+✿ Speed : ${speed} ms
+✿ Runtime : ${format(uptime)}
+✿ RAM : ${ramUsed} MB
+✿ Users : ${users}
+✿ Groups : ${groups}
+✿ Premium : ${premium}`.trim()
 
     await conn.sendMessage(m.chat, { image, caption }, { quoted: m })
 }
