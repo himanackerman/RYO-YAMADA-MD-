@@ -1,5 +1,5 @@
 import yts from 'yt-search'
-import { youtube } from '../../lib/scrape/youtube.js'
+import { saveTube } from '../../lib/scrape/youtube.js'
 
 let handler = async (m, { conn, text, usedPrefix, command }) => {
   if (!text) {
@@ -32,22 +32,19 @@ let handler = async (m, { conn, text, usedPrefix, command }) => {
       url = video.url
     }
 
-    const data = await youtube(url, {
-      downloadType: 'video',
-      quality: resolusi
-    })
+    const data = await saveTube(url, 'video', resolusi)
 
-    if (!data?.buffer) {
+    if (!data?.downloadUrl) {
       throw new Error('Gagal mendapatkan file video.')
     }
 
     const caption =
       'Title: ' + (data.title || '-') + '\n' +
       'Duration: ' + (data.duration || '-') + '\n' +
-      'Quality: ' + resolusi + 'p'
+      'Quality: ' + (data.quality || resolusi) + 'p'
 
     await conn.sendMessage(m.chat, {
-      video: data.buffer,
+      video: { url: data.downloadUrl },
       caption: caption,
       mimetype: 'video/mp4'
     }, { quoted: m })
@@ -67,4 +64,3 @@ handler.command = /^(playvid|ytmp4)$/i
 handler.limit = true
 
 export default handler
-  
