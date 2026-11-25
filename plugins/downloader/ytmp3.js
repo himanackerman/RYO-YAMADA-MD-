@@ -1,5 +1,5 @@
 import yts from 'yt-search'
-import { youtube } from '../../lib/scrape/youtube.js'
+import { saveTube } from '../../lib/scrape/youtube.js'
 
 let handler = async (m, { conn, text }) => {
   if (!text) throw `Contoh:
@@ -9,26 +9,23 @@ let handler = async (m, { conn, text }) => {
   await m.react('🕒')
 
   try {
-    let url = text
+    let url = text.trim()
 
-    if (!/^https?:\/\//i.test(text)) {
-      const search = await yts(text)
+    if (!/^https?:\/\//i.test(url)) {
+      const search = await yts(url)
       const video = search.videos[0]
       if (!video) throw 'Video tidak ditemukan.'
       url = video.url
     }
 
-    const data = await youtube(url, {
-      downloadType: 'audio',
-      quality: '128'
-    })
+    const data = await saveTube(url, 'audio', '128')
 
-    if (!data?.buffer) {
+    if (!data?.downloadUrl) {
       throw new Error('Gagal mendapatkan file audio.')
     }
 
     await conn.sendMessage(m.chat, {
-      audio: data.buffer,
+      audio: { url: data.downloadUrl },
       mimetype: 'audio/mpeg',
       fileName: `${data.title || 'audio'}.mp3`,
       ptt: false
